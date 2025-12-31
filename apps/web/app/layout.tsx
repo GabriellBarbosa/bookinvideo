@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Código Limpo na Prática",
   description:
-    "Curso focado em código limpo e sustentável, com exemplos práticos e sessões ao vivo.",
+    "Curso focado em código limpo e sustentável, com exemplos práticos e exercícios técnicos.",
 };
 
 export default function RootLayout({
