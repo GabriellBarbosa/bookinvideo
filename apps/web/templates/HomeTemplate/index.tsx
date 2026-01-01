@@ -1,3 +1,6 @@
+"use client";
+
+import { handleSignIn, handleSignOut } from "@/lib/auth";
 import {
   BadgeCheck,
   BookOpen,
@@ -8,6 +11,7 @@ import {
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
+import { useSession } from "next-auth/react";
 
 const highlights = [
   {
@@ -64,9 +68,10 @@ const bonuses = [
 ];
 
 export default function HomeTemplate() {
+  const { data: session } = useSession();
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(251,191,36,0.16),transparent_35%),radial-gradient(circle_at_80%_0%,rgba(249,115,22,0.12),transparent_30%)]" />
       <header className="relative border-b border-white/5 bg-black/20 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
           <div className="flex items-center gap-3">
@@ -84,6 +89,26 @@ export default function HomeTemplate() {
           </div>
         </div>
       </header>
+
+      <div>
+        {session ? (
+          <button
+            onClick={handleSignOut}
+            className="px-6 py-3 text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+          >
+            Clique para sair {session.user?.name}
+          </button>
+        ) : (
+          <>
+            <button
+              onClick={handleSignIn}
+              className="px-6 py-3 text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+            >
+              Sign in with Google
+            </button>
+          </>
+        )}
+      </div>
 
       <main className="relative mx-auto flex max-w-6xl flex-col gap-16 px-6 py-12 sm:py-20">
         <section className="grid gap-12 lg:grid-cols-[1.05fr_0.95fr]">
