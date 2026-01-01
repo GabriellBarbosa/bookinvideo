@@ -1,5 +1,6 @@
 "use client";
 
+import { Header } from "@/components/Header";
 import {
   BadgeCheck,
   BookOpen,
@@ -68,23 +69,7 @@ const bonuses = [
 export default function HomeTemplate() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white">
-      <header className="relative border-b border-white/5 bg-black/20 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
-          <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 text-slate-950 shadow-lg shadow-amber-400/25">
-              <BadgeCheck className="h-6 w-6" />
-            </div>
-            <div>
-              <p className="text-xs uppercase tracking-[0.2em] text-amber-200/70">
-                Curso
-              </p>
-              <p className="text-lg font-semibold text-white">
-                Código Limpo na Prática
-              </p>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       <main className="relative mx-auto flex max-w-6xl flex-col gap-16 px-6 py-12 sm:py-20">
         <section className="grid gap-12 lg:grid-cols-[1.05fr_0.95fr]">
@@ -147,7 +132,7 @@ export default function HomeTemplate() {
             {modules.map((module) => (
               <div
                 key={module.title}
-                className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-black/30 p-6 shadow-lg shadow-amber-400/10"
+                className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-black/30 p-6"
               >
                 <div className="flex items-center gap-3">
                   <BookOpen className="h-5 w-5 text-amber-300" />
