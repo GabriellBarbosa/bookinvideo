@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entities/user.entity';
 import { Repository } from 'typeorm';
+import { CreateUserBody } from '@bookinvideo/contracts';
 
 export type OAuthProfile = {
   provider: 'google';
@@ -17,7 +18,7 @@ export class EnsureUserFromOAuthUseCase {
     private userRepository: Repository<User>,
   ) {}
 
-  async execute(profile: OAuthProfile) {
+  async execute(profile: CreateUserBody) {
     const user = await this.userRepository.findOne({
       where: { email: profile.email },
     });
