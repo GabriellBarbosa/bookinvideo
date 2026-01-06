@@ -13,7 +13,7 @@ export class EnsureUserFromOAuthUseCase {
 
   async execute(profile: CreateUserBody) {
     const user = await this.userRepository.findOne({
-      where: { email: profile.email },
+      where: { providerUserId: profile.providerUserId },
     });
 
     if (!user) {

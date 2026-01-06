@@ -1,5 +1,12 @@
-import NextAuth from "next-auth";
+import NextAuth, { Profile } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import { CreateUserBody } from "@bookinvideo/contracts";
+
+type OverriddenProfile = Profile & {
+  email_verified: boolean;
+};
+
+const api_base_url = process.env.NEXT_API_URL || "http://localhost:4000";
 
 const handler = NextAuth({
   providers: [
@@ -14,6 +21,44 @@ const handler = NextAuth({
     }),
   ],
   session: { strategy: "jwt" },
+  callbacks: {
+    async signIn({ profile, user }) {
+      try {
+        if (
+          !(profile as OverriddenProfile)?.email_verified ||
+          !user.email ||
+          !user.name ||
+          !user.id
+        ) {
+          return false;
+        }
+
+        const payload: CreateUserBody = {
+          email: user.email,
+          name: user.name,
+          provider: "google",
+          providerUserId: user.id,
+          avatarUrl: user.image,
+        };
+
+        const res = await fetch(api_base_url + "/user/ensure-from-oauth", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        if (!res.ok) {
+          return false;
+        }
+
+        return true;
+      } catch (err) {
+        console.log(err);
+
+        return false;
+      }
+    },
+  },
 });
 
 export { handler as GET, handler as POST };

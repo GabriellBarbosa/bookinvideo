@@ -26,8 +26,8 @@ export class User {
   provider: 'google';
 
   @Index()
-  @Column({ name: 'provider_user_id', nullable: true })
-  providerUserId?: string;
+  @Column({ name: 'provider_user_id' })
+  providerUserId: string;
 
   @Column({ name: 'avatar_url', nullable: true })
   avatarUrl?: string;
