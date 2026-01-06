@@ -6,8 +6,6 @@ import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './modules/user/user.module';
 import { dataSourceOptions } from 'db/datasource';
 
-console.log('AQUI', __dirname);
-
 @Module({
   imports: [
     ConfigModule.forRoot(),
