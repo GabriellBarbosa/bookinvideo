@@ -13,5 +13,8 @@ exports.UserSchema = zod_1.z.object({
 exports.CreateUserBodySchema = zod_1.z.object({
     name: zod_1.z.string().min(1),
     email: zod_1.z.email(),
+    provider: zod_1.z.enum(['google']),
+    providerUserId: zod_1.z.string().min(1),
+    avatarUrl: zod_1.z.string().optional().nullable()
 });
 exports.CreateUserResponseSchema = exports.UserSchema;

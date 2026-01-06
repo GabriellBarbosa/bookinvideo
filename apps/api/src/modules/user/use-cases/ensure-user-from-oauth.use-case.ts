@@ -4,13 +4,6 @@ import { User } from '../entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateUserBody } from '@bookinvideo/contracts';
 
-export type OAuthProfile = {
-  provider: 'google';
-  providerUserId: string;
-  email: string;
-  name: string;
-};
-
 @Injectable()
 export class EnsureUserFromOAuthUseCase {
   constructor(
@@ -27,6 +20,9 @@ export class EnsureUserFromOAuthUseCase {
       const updatedUser = this.userRepository.create({
         email: profile.email,
         name: profile.name,
+        provider: profile.provider,
+        providerUserId: profile.providerUserId,
+        avatarUrl: profile.avatarUrl || undefined,
       });
 
       return this.userRepository.save(updatedUser);

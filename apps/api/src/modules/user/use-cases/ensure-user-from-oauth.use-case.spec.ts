@@ -1,10 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import type { Repository } from 'typeorm';
-import {
-  EnsureUserFromOAuthUseCase,
-  OAuthProfile,
-} from './ensure-user-from-oauth.use-case';
+import { EnsureUserFromOAuthUseCase } from './ensure-user-from-oauth.use-case';
 import { User } from '../entities/user.entity';
 import { CreateUserBody } from '@bookinvideo/contracts';
 
@@ -17,6 +14,9 @@ describe('EnsureUserFromOAuthUseCase', () => {
   ): CreateUserBody => ({
     email: 'gabriel@email.com',
     name: 'Gabriel',
+    provider: 'google',
+    providerUserId: '123',
+    avatarUrl: 'https://avatar.iran.liara.run/public',
     ...overrides,
   });
 
@@ -50,8 +50,11 @@ describe('EnsureUserFromOAuthUseCase', () => {
 
     userRepo.create.mockReturnValue({
       id: 'user-1',
-      email: profile.email!,
-      name: profile.name!,
+      email: profile.email,
+      name: profile.name,
+      provider: profile.provider,
+      providerUserId: profile.providerUserId,
+      avatarUrl: profile.avatarUrl,
     } as unknown as User);
 
     userRepo.save.mockImplementation(async (u) => u as User);
@@ -63,6 +66,10 @@ describe('EnsureUserFromOAuthUseCase', () => {
     expect(userRepo.save).toHaveBeenCalled();
     expect(result).toMatchObject({
       email: profile.email,
+      name: profile.name,
+      provider: profile.provider,
+      providerUserId: profile.providerUserId,
+      avatarUrl: profile?.avatarUrl,
     });
   });
 

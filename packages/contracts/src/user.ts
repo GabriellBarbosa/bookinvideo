@@ -15,6 +15,9 @@ export type User = z.infer<typeof UserSchema>;
 export const CreateUserBodySchema = z.object({
   name: z.string().min(1),
   email: z.email(),
+  provider: z.enum(['google']),
+  providerUserId: z.string().min(1),
+  avatarUrl: z.string().optional().nullable()
 });
 export type CreateUserBody = z.infer<typeof CreateUserBodySchema>;
 

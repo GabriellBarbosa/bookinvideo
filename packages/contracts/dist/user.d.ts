@@ -18,6 +18,11 @@ export type User = z.infer<typeof UserSchema>;
 export declare const CreateUserBodySchema: z.ZodObject<{
     name: z.ZodString;
     email: z.ZodEmail;
+    provider: z.ZodEnum<{
+        google: "google";
+    }>;
+    providerUserId: z.ZodString;
+    avatarUrl: z.ZodNullable<z.ZodOptional<z.ZodString>>;
 }, z.core.$strip>;
 export type CreateUserBody = z.infer<typeof CreateUserBodySchema>;
 export declare const CreateUserResponseSchema: z.ZodObject<{
