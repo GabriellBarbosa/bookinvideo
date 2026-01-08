@@ -4,8 +4,8 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './modules/user/user.module';
-import { dataSourceOptions } from 'db/datasource';
 import { CourseModule } from './modules/course/course.module';
+import { dataSourceOptions } from './db/datasource';
 
 @Module({
   imports: [
