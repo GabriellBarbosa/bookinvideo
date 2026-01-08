@@ -5,12 +5,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './modules/user/user.module';
 import { dataSourceOptions } from 'db/datasource';
+import { CourseModule } from './modules/course/course.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot(dataSourceOptions),
     UserModule,
+    CourseModule,
   ],
   controllers: [AppController],
   providers: [AppService],
