@@ -4,5 +4,9 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "deleteOutDir": true
+  },
+  "options": {
+    "webpack": true,
+    "webpackConfigPath": "webpack-hmr.config.js"
   }
 }
