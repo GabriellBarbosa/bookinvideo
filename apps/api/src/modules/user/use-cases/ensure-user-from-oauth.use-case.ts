@@ -16,18 +16,18 @@ export class EnsureUserFromOAuthUseCase {
       where: { providerUserId: profile.providerUserId },
     });
 
-    if (!user) {
-      const updatedUser = this.userRepository.create({
-        email: profile.email,
-        name: profile.name,
-        provider: profile.provider,
-        providerUserId: profile.providerUserId,
-        avatarUrl: profile.avatarUrl || undefined,
-      });
-
-      return this.userRepository.save(updatedUser);
+    if (user) {
+      return user;
     }
 
-    return user;
+    const newUser = this.userRepository.create({
+      email: profile.email,
+      name: profile.name,
+      provider: profile.provider,
+      providerUserId: profile.providerUserId,
+      avatarUrl: profile.avatarUrl || undefined,
+    });
+
+    return this.userRepository.save(newUser);
   }
 }
