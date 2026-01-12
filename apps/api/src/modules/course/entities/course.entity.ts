@@ -5,7 +5,9 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
+  OneToMany,
 } from 'typeorm';
+import { CourseModule } from './course-module.entity';
 
 @Entity({ name: 'courses' })
 export class Course {
@@ -57,4 +59,7 @@ export class Course {
 
   @UpdateDateColumn({ type: 'timestamptz', name: 'updated_at' })
   updatedAt: Date;
+
+  @OneToMany(() => CourseModule, (module) => module.course)
+  modules: CourseModule[];
 }
