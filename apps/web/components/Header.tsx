@@ -1,6 +1,6 @@
 import { BookOpen, LogOut, User } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { Button } from "../ui/button";
+import { Button } from "./ui/button";
 import { handleSignIn, handleSignOut } from "@/lib/auth";
 
 export function Header() {
