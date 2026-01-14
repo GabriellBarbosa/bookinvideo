@@ -2,11 +2,14 @@
 
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "next-themes";
+import ReactQueryProvider from "@/utils/ReactQueryProvider";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-      <SessionProvider>{children}</SessionProvider>
+      <ReactQueryProvider>
+        <SessionProvider>{children}</SessionProvider>
+      </ReactQueryProvider>
     </ThemeProvider>
   );
 }
