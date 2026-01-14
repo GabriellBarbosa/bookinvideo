@@ -1,6 +1,6 @@
 "use client";
 
-import { Header } from "@/components/Header";
+import { Header } from "@/templates/HomeTemplate/components/Header";
 import {
   BadgeCheck,
   BookOpen,
@@ -68,7 +68,7 @@ const bonuses = [
 
 export default function HomeTemplate() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white">
+    <div className="min-h-screen">
       <Header />
 
       <main className="relative mx-auto flex max-w-6xl flex-col gap-16 px-6 py-12 sm:py-20">
