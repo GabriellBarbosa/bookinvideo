@@ -36,12 +36,12 @@ export function CourseSidebar({ courseStructure }: Props) {
       </SidebarHeader>
       <SidebarGroupContent>
         <SidebarMenu>
-          {courseStructure.modules.map((module: Module, index) => (
+          {courseStructure.modules.map((module: Module, index: number) => (
             <SidebarGroup key={index}>
               <SidebarGroupLabel>{module.title}</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
-                  {module.lessons.map((lesson: Lesson, index) => (
+                  {module.lessons.map((lesson: Lesson, index: number) => (
                     <SidebarMenuItem key={index}>
                       <SidebarMenuButton asChild>
                         <Link
