@@ -1,16 +1,28 @@
 "use client";
 
-import CourseTemplate from "@/templates/CourseTemplate";
-import { useParams, useSearchParams } from "next/navigation";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { useParams } from "next/navigation";
+import { CourseHeader } from "./_components/CourseHeader";
+import { useCourse } from "./_hooks/use-course";
+import { CourseSidebar } from "./_components/CourseSidebar";
 
 export default function Course() {
   const { slug } = useParams();
-  const searchParams = useSearchParams();
-  const moduleName = searchParams.get("module");
+  const { data, isLoading } = useCourse(slug as string);
 
-  if (!moduleName) {
-    return null;
+  if (!data || isLoading) {
+    return <div>Carregando</div>;
   }
 
-  return <CourseTemplate slug={slug as string} moduleName={moduleName} />;
+  return (
+    <div>
+      <SidebarProvider>
+        <CourseSidebar courseStructure={data} />
+
+        <SidebarInset>
+          <CourseHeader />
+        </SidebarInset>
+      </SidebarProvider>
+    </div>
+  );
 }

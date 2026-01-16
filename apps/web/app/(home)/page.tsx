@@ -1,6 +1,5 @@
 "use client";
 
-import { Header } from "@/templates/HomeTemplate/components/Header";
 import {
   BadgeCheck,
   BookOpen,
@@ -11,6 +10,7 @@ import {
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
+import { Header } from "./_components/Header";
 
 const highlights = [
   {
@@ -66,7 +66,7 @@ const bonuses = [
   "Sessão ao vivo para dúvidas e revisão de código",
 ];
 
-export default function HomeTemplate() {
+export default function Home() {
   return (
     <div className="min-h-screen">
       <Header />

@@ -1,4 +1,4 @@
-import { handleSignIn, handleSignOut } from "@/lib/auth";
+import { handleSignIn, handleSignOut } from "@/utils/auth";
 import { Button } from "./ui/button";
 import { LogOut, User } from "lucide-react";
 import { useSession } from "next-auth/react";

@@ -2,7 +2,7 @@
 
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "next-themes";
-import ReactQueryProvider from "@/utils/ReactQueryProvider";
+import ReactQueryProvider from "@/providers/react-query-provider";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
