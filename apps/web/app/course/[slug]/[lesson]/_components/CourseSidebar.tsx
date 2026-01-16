@@ -16,6 +16,9 @@ interface Props {
   courseStructure: CourseStructure;
 }
 
+type Module = CourseStructure["modules"][number];
+type Lesson = Module["lessons"][number];
+
 export function CourseSidebar({ courseStructure }: Props) {
   return (
     <Sidebar>
@@ -33,12 +36,12 @@ export function CourseSidebar({ courseStructure }: Props) {
       </SidebarHeader>
       <SidebarGroupContent>
         <SidebarMenu>
-          {courseStructure.modules.map((module, index) => (
+          {courseStructure.modules.map((module: Module, index) => (
             <SidebarGroup key={index}>
               <SidebarGroupLabel>{module.title}</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
-                  {module.lessons.map((lesson, index) => (
+                  {module.lessons.map((lesson: Lesson, index) => (
                     <SidebarMenuItem key={index}>
                       <SidebarMenuButton asChild>
                         <Link
