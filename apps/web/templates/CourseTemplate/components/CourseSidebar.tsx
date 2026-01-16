@@ -1,16 +1,5 @@
 import {
-  BookOpen,
-  Calendar,
-  Home,
-  Inbox,
-  Search,
-  Settings,
-  TableOfContents,
-} from "lucide-react";
-
-import {
   Sidebar,
-  SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -19,37 +8,15 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { CourseStructure } from "@bookinvideo/contracts";
+import Link from "next/link";
+import { ROUTES } from "@/config/routes";
 
-// Menu items.
-const items = [
-  {
-    title: "Home",
-    url: "#",
-    icon: Home,
-  },
-  {
-    title: "Inbox",
-    url: "#",
-    icon: Inbox,
-  },
-  {
-    title: "Calendar",
-    url: "#",
-    icon: Calendar,
-  },
-  {
-    title: "Search",
-    url: "#",
-    icon: Search,
-  },
-  {
-    title: "Settings",
-    url: "#",
-    icon: Settings,
-  },
-];
+interface Props {
+  courseStructure: CourseStructure;
+}
 
-export function CourseSidebar() {
+export function CourseSidebar({ courseStructure }: Props) {
   return (
     <Sidebar>
       <SidebarHeader>
@@ -59,30 +26,41 @@ export function CourseSidebar() {
               asChild
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
-              <p className="text-base font-semibold">Acme Inc.</p>
+              <p className="text-base font-semibold">{courseStructure.title}</p>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
+      <SidebarGroupContent>
+        <SidebarMenu>
+          {courseStructure.modules.map((module, index) => (
+            <SidebarGroup key={index}>
+              <SidebarGroupLabel>{module.title}</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {module.lessons.map((lesson, index) => (
+                    <SidebarMenuItem key={index}>
+                      <SidebarMenuButton asChild>
+                        <Link
+                          className="flex items-center justify-between"
+                          href={ROUTES.course(
+                            courseStructure.slug,
+                            module.slug,
+                            lesson.slug
+                          )}
+                        >
+                          <span>{lesson.title}</span>
+                          <span className="w-[6px] h-[6px] rounded-full bg-green-400"></span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          ))}
+        </SidebarMenu>
+      </SidebarGroupContent>
     </Sidebar>
   );
 }
