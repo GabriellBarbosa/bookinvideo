@@ -29,7 +29,7 @@ export enum LessonContentType {
 }
 
 @Entity({ name: 'lessons' })
-@Index(['courseId', 'slug'], { unique: true })
+@Index(['moduleId', 'slug'], { unique: true })
 export class Lesson {
   @PrimaryGeneratedColumn('uuid', { name: 'id' })
   id: string;
