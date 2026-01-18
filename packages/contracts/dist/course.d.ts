@@ -17,3 +17,9 @@ export declare const CourseStructureSchema: z.ZodObject<{
     }, z.core.$strip>>;
 }, z.core.$strip>;
 export type CourseStructure = z.infer<typeof CourseStructureSchema>;
+export declare const GetLessonBodySchema: z.ZodObject<{
+    courseSlug: z.ZodString;
+    moduleSlug: z.ZodString;
+    lessonSlug: z.ZodString;
+}, z.core.$strip>;
+export type GetLessonBody = z.infer<typeof GetLessonBodySchema>;

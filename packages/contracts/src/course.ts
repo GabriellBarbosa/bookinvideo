@@ -22,3 +22,10 @@ export const CourseStructureSchema = z.object({
   modules: z.array(ModuleSchema),
 });
 export type CourseStructure = z.infer<typeof CourseStructureSchema>;
+
+export const GetLessonBodySchema = z.object({
+  courseSlug: z.string().min(1),
+  moduleSlug: z.string().min(1),
+  lessonSlug: z.string().min(1),
+});
+export type GetLessonBody = z.infer<typeof GetLessonBodySchema>;
