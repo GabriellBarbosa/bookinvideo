@@ -45,7 +45,7 @@ export default function Course() {
         <SidebarInset>
           <CourseHeader />
 
-          <main className="p-6 space-y-4">
+          <main className="p-6 space-y-4 max-w-sm">
             <section className="space-y-4">
               <div className="aspect-video w-full overflow-hidden rounded-xl border bg-muted">
                 {lesson.videoUrl ? (

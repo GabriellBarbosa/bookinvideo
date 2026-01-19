@@ -11,6 +11,8 @@ import {
   Sparkles,
 } from "lucide-react";
 import { Header } from "./_components/Header";
+import Link from "next/link";
+import { ROUTES } from "@/config/routes";
 
 const highlights = [
   {
@@ -90,7 +92,15 @@ export default function Home() {
                 Garantir minha vaga
               </button>
               <button className="inline-flex items-center justify-center rounded-full border border-white/15 px-6 py-3 text-base font-semibold text-white transition hover:border-amber-400/60 hover:text-amber-100">
-                Ver conteúdo completo
+                <Link
+                  href={ROUTES.course(
+                    "clean-code",
+                    "intro",
+                    "clean-code-introduction",
+                  )}
+                >
+                  Ver conteúdo completo
+                </Link>
               </button>
             </div>
           </div>
