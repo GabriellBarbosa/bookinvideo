@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const LessonSchema = z.object({
+export const LessonSchema = z.object({
   title: z.string().min(1),
   slug: z.string().min(1),
   videoUrl: z.string().nullable(),
@@ -8,6 +8,7 @@ const LessonSchema = z.object({
   position: z.number().int().positive(),
   isFree: z.boolean(),
 });
+export type Lesson = z.infer<typeof LessonSchema>;
 
 const ModuleSchema = z.object({
   title: z.string().min(1),
@@ -23,9 +24,9 @@ export const CourseStructureSchema = z.object({
 });
 export type CourseStructure = z.infer<typeof CourseStructureSchema>;
 
-export const GetLessonBodySchema = z.object({
+export const LessonBodySchema = z.object({
   courseSlug: z.string().min(1),
   moduleSlug: z.string().min(1),
   lessonSlug: z.string().min(1),
 });
-export type GetLessonBody = z.infer<typeof GetLessonBodySchema>;
+export type LessonBody = z.infer<typeof LessonBodySchema>;

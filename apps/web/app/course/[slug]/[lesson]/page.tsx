@@ -1,23 +1,34 @@
 "use client";
 
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { CourseHeader } from "./_components/CourseHeader";
-import { useCourse } from "./_hooks/use-course";
+import { useCourseStructure } from "./_hooks/use-course-structure";
 import { CourseSidebar } from "./_components/CourseSidebar";
+import { useLesson } from "./_hooks/use-lesson";
 
 export default function Course() {
-  const { slug } = useParams();
-  const { data, isLoading } = useCourse(slug as string);
+  const { slug: courseSlug, lesson: lessonSlug } = useParams();
+  const searchParams = useSearchParams();
+  const moduleSlug = searchParams.get("module");
 
-  if (!data || isLoading) {
+  const { data: courseStructure, isLoading: courseStructureLoading } =
+    useCourseStructure(courseSlug as string);
+    
+  const { data: lesson, isLoading: lessonLoading } = useLesson({
+    courseSlug: courseSlug as string,
+    lessonSlug: lessonSlug as string,
+    moduleSlug,
+  });
+
+  if (!courseStructure || courseStructureLoading) {
     return <div>Carregando</div>;
   }
 
   return (
     <div>
       <SidebarProvider>
-        <CourseSidebar courseStructure={data} />
+        <CourseSidebar courseStructure={courseStructure} />
 
         <SidebarInset>
           <CourseHeader />

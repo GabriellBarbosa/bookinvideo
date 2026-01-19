@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GetLessonBodySchema = exports.CourseStructureSchema = void 0;
+exports.LessonBodySchema = exports.CourseStructureSchema = exports.LessonSchema = void 0;
 const zod_1 = require("zod");
-const LessonSchema = zod_1.z.object({
+exports.LessonSchema = zod_1.z.object({
     title: zod_1.z.string().min(1),
     slug: zod_1.z.string().min(1),
     videoUrl: zod_1.z.string().nullable(),
@@ -14,14 +14,14 @@ const ModuleSchema = zod_1.z.object({
     title: zod_1.z.string().min(1),
     slug: zod_1.z.string().min(1),
     position: zod_1.z.number().int().positive(),
-    lessons: zod_1.z.array(LessonSchema),
+    lessons: zod_1.z.array(exports.LessonSchema),
 });
 exports.CourseStructureSchema = zod_1.z.object({
     title: zod_1.z.string().min(1),
     slug: zod_1.z.string().min(1),
     modules: zod_1.z.array(ModuleSchema),
 });
-exports.GetLessonBodySchema = zod_1.z.object({
+exports.LessonBodySchema = zod_1.z.object({
     courseSlug: zod_1.z.string().min(1),
     moduleSlug: zod_1.z.string().min(1),
     lessonSlug: zod_1.z.string().min(1),

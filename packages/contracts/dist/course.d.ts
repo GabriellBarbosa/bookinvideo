@@ -1,4 +1,13 @@
 import { z } from "zod";
+export declare const LessonSchema: z.ZodObject<{
+    title: z.ZodString;
+    slug: z.ZodString;
+    videoUrl: z.ZodNullable<z.ZodString>;
+    durationSeconds: z.ZodNullable<z.ZodNumber>;
+    position: z.ZodNumber;
+    isFree: z.ZodBoolean;
+}, z.core.$strip>;
+export type Lesson = z.infer<typeof LessonSchema>;
 export declare const CourseStructureSchema: z.ZodObject<{
     title: z.ZodString;
     slug: z.ZodString;
@@ -17,9 +26,9 @@ export declare const CourseStructureSchema: z.ZodObject<{
     }, z.core.$strip>>;
 }, z.core.$strip>;
 export type CourseStructure = z.infer<typeof CourseStructureSchema>;
-export declare const GetLessonBodySchema: z.ZodObject<{
+export declare const LessonBodySchema: z.ZodObject<{
     courseSlug: z.ZodString;
     moduleSlug: z.ZodString;
     lessonSlug: z.ZodString;
 }, z.core.$strip>;
-export type GetLessonBody = z.infer<typeof GetLessonBodySchema>;
+export type LessonBody = z.infer<typeof LessonBodySchema>;

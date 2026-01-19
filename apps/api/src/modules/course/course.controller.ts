@@ -1,14 +1,10 @@
 import {
-  Body,
   Controller,
   Get,
   NotFoundException,
   Param,
+  Query,
 } from '@nestjs/common';
-import {
-  type GetLessonBody,
-  GetLessonBodySchema,
-} from '@bookinvideo/contracts';
 import { CourseService } from './course.service';
 
 @Controller('course')
@@ -27,10 +23,11 @@ export class CourseController {
   }
 
   @Get('/lesson')
-  async getLesson(@Body() body: GetLessonBody) {
-    const { courseSlug, lessonSlug, moduleSlug } =
-      GetLessonBodySchema.parse(body);
-
+  async getLesson(
+    @Query('courseSlug') courseSlug: string,
+    @Query('moduleSlug') moduleSlug: string,
+    @Query('lessonSlug') lessonSlug: string,
+  ) {
     const lesson = await this.courseService.getLesson({
       courseSlug,
       lessonSlug,

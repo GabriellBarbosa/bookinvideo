@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Course } from './entities/course.entity';
 import { Repository } from 'typeorm';
-import { CourseStructure, GetLessonBody } from '@bookinvideo/contracts';
+import {
+  CourseStructure,
+  LessonBody,
+  Lesson as LessonType,
+} from '@bookinvideo/contracts';
 import { Lesson } from './entities/lesson.entity';
 
 @Injectable()
@@ -59,7 +63,11 @@ export class CourseService {
     };
   }
 
-  async getLesson({ courseSlug, moduleSlug, lessonSlug }: GetLessonBody) {
+  async getLesson({
+    courseSlug,
+    moduleSlug,
+    lessonSlug,
+  }: LessonBody): Promise<LessonType | null> {
     const lesson = await this.lessonRepository.findOne({
       where: {
         slug: lessonSlug,
