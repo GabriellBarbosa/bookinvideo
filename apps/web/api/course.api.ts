@@ -1,9 +1,4 @@
-import {
-  CourseStructure,
-  Lesson,
-  LessonBody,
-  LessonBodySchema,
-} from "@bookinvideo/contracts";
+import { CourseStructure, Lesson, LessonBody } from "@bookinvideo/contracts";
 import { QueryFunctionContext } from "@tanstack/react-query";
 
 export async function fetchCourseStructure(
@@ -25,7 +20,7 @@ export async function fetchLesson(
 ): Promise<Lesson> {
   const [, body] = ctx.queryKey;
 
-  const { courseSlug, lessonSlug, moduleSlug } = LessonBodySchema.parse(body);
+  const { courseSlug, lessonSlug, moduleSlug } = body;
 
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/course/lesson?courseSlug=${courseSlug}&moduleSlug=${moduleSlug}&lessonSlug=${lessonSlug}`,
