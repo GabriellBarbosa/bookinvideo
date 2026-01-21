@@ -13,7 +13,7 @@ import { User } from '../../user/entities/user.entity';
 
 @Entity({ name: 'lesson_progress' })
 @Index(['userId', 'lessonId'], { unique: true })
-export class LessonProgressEntity {
+export class LessonProgress {
   @PrimaryGeneratedColumn('uuid', { name: 'id' })
   id: string;
 
@@ -33,9 +33,6 @@ export class LessonProgressEntity {
 
   @Column({ type: 'int', nullable: true, name: 'last_position_seconds' })
   lastPositionSeconds: number | null;
-
-  @Column({ type: 'smallint', nullable: true, name: 'progress_percent' })
-  progressPercent: number | null;
 
   @Column({ type: 'timestamptz', nullable: true, name: 'completed_at' })
   completedAt: Date | null;
