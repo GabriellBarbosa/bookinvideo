@@ -1,12 +1,11 @@
 import NextAuth, { Profile } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { CreateUserBody } from "@bookinvideo/contracts";
+import { API_URL } from "@/config/nest-api-url";
 
 type OverriddenProfile = Profile & {
   email_verified: boolean;
 };
-
-const api_base_url = process.env.NEXT_API_URL || "http://localhost:4000";
 
 const handler = NextAuth({
   providers: [
@@ -41,7 +40,7 @@ const handler = NextAuth({
           avatarUrl: user.image,
         };
 
-        const res = await fetch(api_base_url + "/user/ensure-from-oauth", {
+        const res = await fetch(API_URL + "/user/ensure-from-oauth", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
