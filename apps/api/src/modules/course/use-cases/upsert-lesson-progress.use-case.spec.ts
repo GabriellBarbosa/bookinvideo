@@ -1,8 +1,10 @@
+import { NotFoundException } from '@nestjs/common';
 import { Repository, UpdateResult } from 'typeorm';
 import { LessonProgress } from '../entities/lesson-progress.entity';
 import { UpsertLessonProgressUseCase } from './upsert-lesson-progress.use-case';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Test, TestingModule } from '@nestjs/testing';
+import { User } from '../../user/entities/user.entity';
 
 describe('UpsertLessonProgressUseCase', () => {
   const userId = 'user-1';
@@ -10,6 +12,7 @@ describe('UpsertLessonProgressUseCase', () => {
 
   let useCase: UpsertLessonProgressUseCase;
   let lessonProgressRepo: jest.Mocked<Repository<LessonProgress>>;
+  let userRepository: jest.Mocked<Repository<User>>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -19,8 +22,14 @@ describe('UpsertLessonProgressUseCase', () => {
           provide: getRepositoryToken(LessonProgress),
           useValue: {
             findOne: jest.fn(),
-            create: jest.fn(),
+            save: jest.fn(),
             update: jest.fn(),
+          },
+        },
+        {
+          provide: getRepositoryToken(User),
+          useValue: {
+            findOne: jest.fn(),
           },
         },
       ],
@@ -30,31 +39,47 @@ describe('UpsertLessonProgressUseCase', () => {
       UpsertLessonProgressUseCase,
     );
     lessonProgressRepo = module.get(getRepositoryToken(LessonProgress));
+    userRepository = module.get(getRepositoryToken(User));
+    userRepository.findOne.mockResolvedValue({
+      uuid: 'user-uuid',
+      providerUserId: userId,
+    } as User);
   });
+
+  it('throws when user does not exist', async () => {
+    userRepository.findOne.mockResolvedValue(null);
+
+    await expect(
+      useCase.execute({ userId, lessonId, seconds: 120 }),
+    ).rejects.toBeInstanceOf(NotFoundException);
+    expect(lessonProgressRepo.findOne).not.toHaveBeenCalled();
+  });
+
+  // TODO handle lesson not found
 
   it('creates progress when it does not exist', async () => {
     lessonProgressRepo.findOne.mockResolvedValue(null);
 
     const created = {
       id: 'p1',
-      userId,
+      userId: 'user-uuid',
       lessonId,
       lastPositionSeconds: 120,
       completedAt: null,
     };
 
-    lessonProgressRepo.create.mockReturnValue(created as LessonProgress);
+    lessonProgressRepo.save.mockResolvedValue(created as LessonProgress);
 
     const result = await useCase.execute({ userId, lessonId, seconds: 120 });
 
     expect(lessonProgressRepo.findOne).toHaveBeenCalledWith({
       where: {
-        userId: userId,
         lessonId: lessonId,
+        userId: 'user-uuid',
       },
     });
-    expect(lessonProgressRepo.create).toHaveBeenCalledWith({
-      userId,
+    expect(lessonProgressRepo.save).toHaveBeenCalledWith({
+      userId: 'user-uuid',
       lessonId,
       lastPositionSeconds: 120,
       completedAt: null,
@@ -66,7 +91,7 @@ describe('UpsertLessonProgressUseCase', () => {
   it('updates progress when incoming seconds is greater', async () => {
     const existing = {
       id: 'p1',
-      userId,
+      userId: 'user-uuid',
       lessonId,
       lastPositionSeconds: 100,
       completedAt: null,
@@ -94,7 +119,7 @@ describe('UpsertLessonProgressUseCase', () => {
   it('does NOT decrease progress when user rewinds (incoming seconds is smaller)', async () => {
     const existing = {
       id: 'p1',
-      userId,
+      userId: 'user-uuid',
       lessonId,
       lastPositionSeconds: 200,
       completedAt: null,
@@ -105,7 +130,7 @@ describe('UpsertLessonProgressUseCase', () => {
     const result = await useCase.execute({ userId, lessonId, seconds: 150 });
 
     expect(lessonProgressRepo.update).not.toHaveBeenCalled();
-    expect(lessonProgressRepo.create).not.toHaveBeenCalled();
+    expect(lessonProgressRepo.save).not.toHaveBeenCalled();
     expect(result).toEqual(existing);
   });
 
@@ -114,18 +139,18 @@ describe('UpsertLessonProgressUseCase', () => {
 
     const created = {
       id: 'p1',
-      userId,
+      userId: 'user-uuid',
       lessonId,
       lastPositionSeconds: 0,
       completedAt: null,
     };
 
-    lessonProgressRepo.create.mockReturnValue(created as LessonProgress);
+    lessonProgressRepo.save.mockResolvedValue(created as LessonProgress);
 
     await useCase.execute({ userId, lessonId, seconds: -10.7 });
 
-    expect(lessonProgressRepo.create).toHaveBeenCalledWith({
-      userId,
+    expect(lessonProgressRepo.save).toHaveBeenCalledWith({
+      userId: 'user-uuid',
       lessonId,
       lastPositionSeconds: 0,
       completedAt: null,
