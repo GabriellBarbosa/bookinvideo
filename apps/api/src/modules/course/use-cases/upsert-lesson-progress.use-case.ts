@@ -20,7 +20,7 @@ export class UpsertLessonProgressUseCase {
     const seconds = Math.max(0, Math.floor(input.seconds));
 
     const user = await this.userRepository.findOne({
-      where: { providerUserId: input.userId },
+      where: { email: input.userEmail },
     });
 
     if (!user) {

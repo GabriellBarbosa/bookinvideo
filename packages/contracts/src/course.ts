@@ -35,6 +35,6 @@ export type LessonBody = z.infer<typeof LessonBodySchema>;
 export const LessonProgressBodySchema = z.object({
   seconds: z.number(),
   lessonId: z.uuid(),
-  userId: z.uuid(),
+  userEmail: z.string().min(1),
 });
 export type LessonProgressBody = z.infer<typeof LessonProgressBodySchema>;

@@ -29,5 +29,5 @@ exports.LessonBodySchema = zod_1.z.object({
 exports.LessonProgressBodySchema = zod_1.z.object({
     seconds: zod_1.z.number(),
     lessonId: zod_1.z.uuid(),
-    userId: zod_1.z.uuid(),
+    userEmail: zod_1.z.string().min(1),
 });

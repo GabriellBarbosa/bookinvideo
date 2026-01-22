@@ -8,7 +8,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { User } from '../../user/entities/user.entity';
 
 describe('UpsertLessonProgressUseCase', () => {
-  const userId = 'user-1';
+  const userEmail = 'tests@green.com';
   const lessonId = 'lesson-1';
 
   let useCase: UpsertLessonProgressUseCase;
@@ -52,7 +52,7 @@ describe('UpsertLessonProgressUseCase', () => {
 
     userRepository.findOne.mockResolvedValue({
       uuid: 'user-uuid',
-      providerUserId: userId,
+      email: userEmail,
     } as User);
     lessonRepository.findOne.mockResolvedValue({ id: lessonId } as Lesson);
   });
@@ -61,7 +61,7 @@ describe('UpsertLessonProgressUseCase', () => {
     userRepository.findOne.mockResolvedValue(null);
 
     await expect(
-      useCase.execute({ userId, lessonId, seconds: 120 }),
+      useCase.execute({ userEmail, lessonId, seconds: 120 }),
     ).rejects.toBeInstanceOf(NotFoundException);
     expect(lessonProgressRepo.findOne).not.toHaveBeenCalled();
   });
@@ -70,7 +70,7 @@ describe('UpsertLessonProgressUseCase', () => {
     lessonRepository.findOne.mockResolvedValue(null);
 
     await expect(
-      useCase.execute({ userId, lessonId, seconds: 120 }),
+      useCase.execute({ userEmail, lessonId, seconds: 120 }),
     ).rejects.toBeInstanceOf(NotFoundException);
     expect(lessonProgressRepo.findOne).not.toHaveBeenCalled();
   });
@@ -88,7 +88,7 @@ describe('UpsertLessonProgressUseCase', () => {
 
     lessonProgressRepo.save.mockResolvedValue(created as LessonProgress);
 
-    const result = await useCase.execute({ userId, lessonId, seconds: 120 });
+    const result = await useCase.execute({ userEmail, lessonId, seconds: 120 });
 
     expect(lessonProgressRepo.findOne).toHaveBeenCalledWith({
       where: {
@@ -126,7 +126,7 @@ describe('UpsertLessonProgressUseCase', () => {
       updated as unknown as UpdateResult,
     );
 
-    const result = await useCase.execute({ userId, lessonId, seconds: 150 });
+    const result = await useCase.execute({ userEmail, lessonId, seconds: 150 });
 
     expect(lessonProgressRepo.update).toHaveBeenCalledWith('p1', {
       lastPositionSeconds: 150,
@@ -145,7 +145,7 @@ describe('UpsertLessonProgressUseCase', () => {
 
     lessonProgressRepo.findOne.mockResolvedValue(existing as LessonProgress);
 
-    const result = await useCase.execute({ userId, lessonId, seconds: 150 });
+    const result = await useCase.execute({ userEmail, lessonId, seconds: 150 });
 
     expect(lessonProgressRepo.update).not.toHaveBeenCalled();
     expect(lessonProgressRepo.save).not.toHaveBeenCalled();
@@ -165,7 +165,7 @@ describe('UpsertLessonProgressUseCase', () => {
 
     lessonProgressRepo.save.mockResolvedValue(created as LessonProgress);
 
-    await useCase.execute({ userId, lessonId, seconds: -10.7 });
+    await useCase.execute({ userEmail, lessonId, seconds: -10.7 });
 
     expect(lessonProgressRepo.save).toHaveBeenCalledWith({
       userId: 'user-uuid',
