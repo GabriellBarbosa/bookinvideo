@@ -54,6 +54,6 @@ export class CourseController {
   @Post('/lesson-progress')
   async upsertLessonProgress(@Body() body: LessonProgressBody) {
     const parsedBody = LessonProgressBodySchema.parse(body);
-    this.upsertLessonProgressUseCase.execute(parsedBody);
+    return await this.upsertLessonProgressUseCase.execute(parsedBody);
   }
 }
