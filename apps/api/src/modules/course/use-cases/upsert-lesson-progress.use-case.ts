@@ -4,6 +4,7 @@ import { LessonProgress } from '../entities/lesson-progress.entity';
 import { Repository } from 'typeorm';
 import { LessonProgressBody } from '@bookinvideo/contracts';
 import { User } from '../../user/entities/user.entity';
+import { Lesson } from '../entities/lesson.entity';
 
 export class UpsertLessonProgressUseCase {
   constructor(
@@ -11,6 +12,8 @@ export class UpsertLessonProgressUseCase {
     private readonly lessonProgressRepository: Repository<LessonProgress>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Lesson)
+    private readonly lessonRepository: Repository<Lesson>,
   ) {}
 
   async execute(input: LessonProgressBody) {
@@ -24,7 +27,13 @@ export class UpsertLessonProgressUseCase {
       throw new NotFoundException('User not found');
     }
 
-    // TODO handle lesson not found
+    const lesson = await this.lessonRepository.findOne({
+      where: { id: input.lessonId },
+    });
+
+    if (!lesson) {
+      throw new NotFoundException('Lesson not found');
+    }
 
     const existing = await this.lessonProgressRepository.findOne({
       where: {

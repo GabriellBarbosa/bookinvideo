@@ -1,6 +1,7 @@
 import { NotFoundException } from '@nestjs/common';
 import { Repository, UpdateResult } from 'typeorm';
 import { LessonProgress } from '../entities/lesson-progress.entity';
+import { Lesson } from '../entities/lesson.entity';
 import { UpsertLessonProgressUseCase } from './upsert-lesson-progress.use-case';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -12,6 +13,7 @@ describe('UpsertLessonProgressUseCase', () => {
 
   let useCase: UpsertLessonProgressUseCase;
   let lessonProgressRepo: jest.Mocked<Repository<LessonProgress>>;
+  let lessonRepository: jest.Mocked<Repository<Lesson>>;
   let userRepository: jest.Mocked<Repository<User>>;
 
   beforeEach(async () => {
@@ -27,6 +29,12 @@ describe('UpsertLessonProgressUseCase', () => {
           },
         },
         {
+          provide: getRepositoryToken(Lesson),
+          useValue: {
+            findOne: jest.fn(),
+          },
+        },
+        {
           provide: getRepositoryToken(User),
           useValue: {
             findOne: jest.fn(),
@@ -39,11 +47,14 @@ describe('UpsertLessonProgressUseCase', () => {
       UpsertLessonProgressUseCase,
     );
     lessonProgressRepo = module.get(getRepositoryToken(LessonProgress));
+    lessonRepository = module.get(getRepositoryToken(Lesson));
     userRepository = module.get(getRepositoryToken(User));
+
     userRepository.findOne.mockResolvedValue({
       uuid: 'user-uuid',
       providerUserId: userId,
     } as User);
+    lessonRepository.findOne.mockResolvedValue({ id: lessonId } as Lesson);
   });
 
   it('throws when user does not exist', async () => {
@@ -55,7 +66,14 @@ describe('UpsertLessonProgressUseCase', () => {
     expect(lessonProgressRepo.findOne).not.toHaveBeenCalled();
   });
 
-  // TODO handle lesson not found
+  it('throws when lesson does not exist', async () => {
+    lessonRepository.findOne.mockResolvedValue(null);
+
+    await expect(
+      useCase.execute({ userId, lessonId, seconds: 120 }),
+    ).rejects.toBeInstanceOf(NotFoundException);
+    expect(lessonProgressRepo.findOne).not.toHaveBeenCalled();
+  });
 
   it('creates progress when it does not exist', async () => {
     lessonProgressRepo.findOne.mockResolvedValue(null);
