@@ -10,12 +10,13 @@ export const LessonSchema = z.object({
 });
 export type Lesson = z.infer<typeof LessonSchema>;
 
-const ModuleSchema = z.object({
+export const ModuleSchema = z.object({
   title: z.string().min(1),
   slug: z.string().min(1),
   position: z.number().int().positive(),
   lessons: z.array(LessonSchema),
 });
+export type Module = z.infer<typeof ModuleSchema>;
 
 export const CourseStructureSchema = z.object({
   title: z.string().min(1),
@@ -30,3 +31,10 @@ export const LessonBodySchema = z.object({
   lessonSlug: z.string().min(1),
 });
 export type LessonBody = z.infer<typeof LessonBodySchema>;
+
+export const LessonProgressBodySchema = z.object({
+  seconds: z.number(),
+  lessonId: z.uuid(),
+  userId: z.uuid(),
+});
+export type LessonProgressBody = z.infer<typeof LessonProgressBodySchema>;

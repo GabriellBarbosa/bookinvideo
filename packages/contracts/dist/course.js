@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LessonBodySchema = exports.CourseStructureSchema = exports.LessonSchema = void 0;
+exports.LessonProgressBodySchema = exports.LessonBodySchema = exports.CourseStructureSchema = exports.ModuleSchema = exports.LessonSchema = void 0;
 const zod_1 = require("zod");
 exports.LessonSchema = zod_1.z.object({
     title: zod_1.z.string().min(1),
@@ -10,7 +10,7 @@ exports.LessonSchema = zod_1.z.object({
     position: zod_1.z.number().int().positive(),
     isFree: zod_1.z.boolean(),
 });
-const ModuleSchema = zod_1.z.object({
+exports.ModuleSchema = zod_1.z.object({
     title: zod_1.z.string().min(1),
     slug: zod_1.z.string().min(1),
     position: zod_1.z.number().int().positive(),
@@ -19,10 +19,15 @@ const ModuleSchema = zod_1.z.object({
 exports.CourseStructureSchema = zod_1.z.object({
     title: zod_1.z.string().min(1),
     slug: zod_1.z.string().min(1),
-    modules: zod_1.z.array(ModuleSchema),
+    modules: zod_1.z.array(exports.ModuleSchema),
 });
 exports.LessonBodySchema = zod_1.z.object({
     courseSlug: zod_1.z.string().min(1),
     moduleSlug: zod_1.z.string().min(1),
     lessonSlug: zod_1.z.string().min(1),
+});
+exports.LessonProgressBodySchema = zod_1.z.object({
+    seconds: zod_1.z.number(),
+    lessonId: zod_1.z.uuid(),
+    userId: zod_1.z.uuid(),
 });

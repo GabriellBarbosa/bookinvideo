@@ -1,6 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { LessonProgress } from '../entities/lesson-progress.entity';
 import { Repository } from 'typeorm';
+import { LessonProgressBody } from '@bookinvideo/contracts';
 
 export class UpsertLessonProgressUseCase {
   constructor(
@@ -8,7 +9,7 @@ export class UpsertLessonProgressUseCase {
     private readonly lessonProgressRepository: Repository<LessonProgress>,
   ) {}
 
-  async execute(input: { userId: string; lessonId: string; seconds: number }) {
+  async execute(input: LessonProgressBody) {
     const seconds = Math.max(0, Math.floor(input.seconds));
 
     const existing = await this.lessonProgressRepository.findOne({

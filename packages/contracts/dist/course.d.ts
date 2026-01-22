@@ -8,6 +8,20 @@ export declare const LessonSchema: z.ZodObject<{
     isFree: z.ZodBoolean;
 }, z.core.$strip>;
 export type Lesson = z.infer<typeof LessonSchema>;
+export declare const ModuleSchema: z.ZodObject<{
+    title: z.ZodString;
+    slug: z.ZodString;
+    position: z.ZodNumber;
+    lessons: z.ZodArray<z.ZodObject<{
+        title: z.ZodString;
+        slug: z.ZodString;
+        videoUrl: z.ZodNullable<z.ZodString>;
+        durationSeconds: z.ZodNullable<z.ZodNumber>;
+        position: z.ZodNumber;
+        isFree: z.ZodBoolean;
+    }, z.core.$strip>>;
+}, z.core.$strip>;
+export type Module = z.infer<typeof ModuleSchema>;
 export declare const CourseStructureSchema: z.ZodObject<{
     title: z.ZodString;
     slug: z.ZodString;
@@ -32,3 +46,9 @@ export declare const LessonBodySchema: z.ZodObject<{
     lessonSlug: z.ZodString;
 }, z.core.$strip>;
 export type LessonBody = z.infer<typeof LessonBodySchema>;
+export declare const LessonProgressBodySchema: z.ZodObject<{
+    seconds: z.ZodNumber;
+    lessonId: z.ZodUUID;
+    userId: z.ZodUUID;
+}, z.core.$strip>;
+export type LessonProgressBody = z.infer<typeof LessonProgressBodySchema>;

@@ -1,15 +1,25 @@
+import { CourseService } from './course.service';
+import { UpsertLessonProgressUseCase } from './use-cases/upsert-lesson-progress.use-case';
 import {
+  Body,
   Controller,
   Get,
   NotFoundException,
   Param,
+  Post,
   Query,
 } from '@nestjs/common';
-import { CourseService } from './course.service';
+import {
+  LessonProgressBodySchema,
+  type LessonProgressBody,
+} from '@bookinvideo/contracts';
 
 @Controller('course')
 export class CourseController {
-  constructor(private readonly courseService: CourseService) {}
+  constructor(
+    private readonly courseService: CourseService,
+    private readonly upsertLessonProgressUseCase: UpsertLessonProgressUseCase,
+  ) {}
 
   @Get('/course-structure/:slug')
   async getCourseStructure(@Param('slug') slug: string) {
@@ -39,5 +49,11 @@ export class CourseController {
     }
 
     return lesson;
+  }
+
+  @Post('/lesson-progress')
+  async upsertLessonProgress(@Body() body: LessonProgressBody) {
+    const parsedBody = LessonProgressBodySchema.parse(body);
+    return this.upsertLessonProgressUseCase.execute(parsedBody);
   }
 }
