@@ -68,8 +68,8 @@ export class Lesson {
   })
   videoProvider: VideoProvider | null;
 
-  @Column({ type: 'varchar', nullable: true, name: 'video_id' })
-  videoId: string | null;
+  @Column({ type: 'varchar', name: 'video_id' })
+  videoId: string;
 
   @Column({ type: 'varchar', nullable: true, name: 'video_url' })
   videoUrl: string | null;

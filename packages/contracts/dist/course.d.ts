@@ -1,6 +1,7 @@
 import { z } from "zod";
 export declare const LessonSchema: z.ZodObject<{
     id: z.ZodUUID;
+    videoId: z.ZodString;
     title: z.ZodString;
     slug: z.ZodString;
     videoUrl: z.ZodNullable<z.ZodString>;
@@ -15,6 +16,7 @@ export declare const ModuleSchema: z.ZodObject<{
     position: z.ZodNumber;
     lessons: z.ZodArray<z.ZodObject<{
         id: z.ZodUUID;
+        videoId: z.ZodString;
         title: z.ZodString;
         slug: z.ZodString;
         videoUrl: z.ZodNullable<z.ZodString>;
@@ -33,6 +35,7 @@ export declare const CourseStructureSchema: z.ZodObject<{
         position: z.ZodNumber;
         lessons: z.ZodArray<z.ZodObject<{
             id: z.ZodUUID;
+            videoId: z.ZodString;
             title: z.ZodString;
             slug: z.ZodString;
             videoUrl: z.ZodNullable<z.ZodString>;

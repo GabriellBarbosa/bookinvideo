@@ -4,6 +4,7 @@ exports.LessonProgressBodySchema = exports.LessonBodySchema = exports.CourseStru
 const zod_1 = require("zod");
 exports.LessonSchema = zod_1.z.object({
     id: zod_1.z.uuid(),
+    videoId: zod_1.z.string().min(1),
     title: zod_1.z.string().min(1),
     slug: zod_1.z.string().min(1),
     videoUrl: zod_1.z.string().nullable(),

@@ -145,6 +145,7 @@ describe('CourseService', () => {
           slug: 'intro',
           lessons: [
             {
+              id: 'da9b748f-60f8-4e45-bf4f-b3b6b3b66580',
               title: 'Introdução Código Limpo',
               slug: 'clean-code-introduction',
               videoUrl: 'https://youtu.be/nbcfy6_v86A?si=HmTKO2b-uBpMEeUF',
@@ -186,6 +187,7 @@ describe('CourseService', () => {
 
     expect(lessonRepo.findOne).toHaveBeenCalled();
     expect(result).toEqual({
+      id: 'da9b748f-60f8-4e45-bf4f-b3b6b3b66580',
       title: 'Introdução Código Limpo',
       slug: 'clean-code-introduction',
       videoUrl: 'https://youtu.be/nbcfy6_v86A?si=HmTKO2b-uBpMEeUF',

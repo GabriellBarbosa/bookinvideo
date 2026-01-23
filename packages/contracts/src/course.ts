@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const LessonSchema = z.object({
   id: z.uuid(),
+  videoId: z.string().min(1),
   title: z.string().min(1),
   slug: z.string().min(1),
   videoUrl: z.string().nullable(),

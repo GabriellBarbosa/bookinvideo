@@ -53,6 +53,7 @@ export class CourseService {
         slug: module.slug,
         lessons: module.lessons.map((lesson) => ({
           id: lesson.id,
+          videoId: lesson.videoId,
           title: lesson.title,
           slug: lesson.slug,
           videoUrl: lesson.videoUrl,
@@ -87,6 +88,7 @@ export class CourseService {
 
     return {
       id: lesson.id,
+      videoId: lesson.videoId,
       title: lesson.title,
       slug: lesson.slug,
       videoUrl: lesson.videoUrl,
