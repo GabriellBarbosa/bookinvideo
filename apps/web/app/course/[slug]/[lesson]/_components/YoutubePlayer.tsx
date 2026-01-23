@@ -33,7 +33,7 @@ export function YouTubePlayer({ videoId, onPause, onEnded }: Params) {
         events: {
           onStateChange: (event: any) => {
             if (event.data === window.YT.PlayerState.PAUSED) {
-              const seconds = playerRef.current.getCurrentTime();
+              const seconds = playerRef?.current?.getCurrentTime?.() || 0;
               onPause?.(Math.floor(seconds));
             }
 
@@ -49,7 +49,7 @@ export function YouTubePlayer({ videoId, onPause, onEnded }: Params) {
   useEffect(() => {
     function handleVisibilityChange() {
       if (document.visibilityState === "hidden" && playerRef.current) {
-        const seconds = Math.floor(playerRef.current?.getCurrentTime() || 0);
+        const seconds = Math.floor(playerRef.current?.getCurrentTime?.() || 0);
         if (seconds > 0) {
           onPause?.(Math.floor(seconds));
         }
