@@ -17,6 +17,9 @@ export class UpsertLessonProgressUseCase {
   ) {}
 
   async execute(input: LessonProgressBody) {
+    if ((input.seconds === undefined || input.seconds === 0) && !input.completed)
+      throw new Error('seconds is required unless lesson is completed');
+
     const seconds = Math.max(0, Math.floor(input.seconds || 0));
 
     const user = await this.userRepository.findOne({

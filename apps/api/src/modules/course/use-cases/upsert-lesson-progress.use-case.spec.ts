@@ -174,4 +174,21 @@ describe('UpsertLessonProgressUseCase', () => {
       completedAt: null,
     });
   });
+
+  it('throws when neither seconds nor completion flag is provided', async () => {
+    await expect(
+      useCase.execute({
+        userEmail,
+        lessonId,
+        completed: false,
+        seconds: undefined,
+      }),
+    ).rejects.toBeInstanceOf(Error);
+
+    expect(lessonProgressRepo.findOne).not.toHaveBeenCalled();
+    expect(lessonProgressRepo.save).not.toHaveBeenCalled();
+    expect(lessonProgressRepo.update).not.toHaveBeenCalled();
+  });
+
+  // TODO seconds are 98% of duration of the lesson or completed is true. Mark lesson as completed and set the lesson "durationSeconds" value to "lastPositionSeconds"
 });
