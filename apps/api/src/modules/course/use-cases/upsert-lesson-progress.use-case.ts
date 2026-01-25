@@ -38,6 +38,11 @@ export class UpsertLessonProgressUseCase {
       throw new NotFoundException('Lesson not found');
     }
 
+    const shouldComplete =
+      input.completed === true ||
+      (lesson.durationSeconds != null &&
+        seconds >= lesson.durationSeconds * 0.96);
+
     const existing = await this.lessonProgressRepository.findOne({
       where: {
         lessonId: input.lessonId,
@@ -46,11 +51,26 @@ export class UpsertLessonProgressUseCase {
     });
 
     if (!existing) {
+      const lastPositionSeconds = shouldComplete
+        ? lesson.durationSeconds ?? seconds
+        : seconds;
+
       return this.lessonProgressRepository.save({
         userId: user.uuid,
         lessonId: input.lessonId,
-        lastPositionSeconds: seconds,
-        completedAt: null,
+        lastPositionSeconds,
+        completedAt: shouldComplete ? new Date() : null,
+      });
+    }
+
+    if (shouldComplete) {
+      const lastPositionSeconds =
+        lesson.durationSeconds ??
+        Math.max(existing.lastPositionSeconds ?? 0, seconds);
+
+      return this.lessonProgressRepository.update(existing.id, {
+        lastPositionSeconds,
+        completedAt: new Date(),
       });
     }
 

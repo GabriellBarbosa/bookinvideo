@@ -54,7 +54,10 @@ describe('UpsertLessonProgressUseCase', () => {
       uuid: 'user-uuid',
       email: userEmail,
     } as User);
-    lessonRepository.findOne.mockResolvedValue({ id: lessonId } as Lesson);
+    lessonRepository.findOne.mockResolvedValue({
+      id: lessonId,
+      durationSeconds: 200,
+    } as Lesson);
   });
 
   it('throws when user does not exist', async () => {
@@ -190,5 +193,143 @@ describe('UpsertLessonProgressUseCase', () => {
     expect(lessonProgressRepo.update).not.toHaveBeenCalled();
   });
 
-  // TODO seconds are 98% of duration of the lesson or completed is true. Mark lesson as completed and set the lesson "durationSeconds" value to "lastPositionSeconds"
+  it('marks lesson as completed when reaching 96% of duration', async () => {
+    const existing = {
+      id: 'p1',
+      userId: 'user-uuid',
+      lessonId,
+      lastPositionSeconds: 100,
+      completedAt: null,
+    };
+
+    lessonProgressRepo.findOne.mockResolvedValue(existing as LessonProgress);
+
+    const updated = {
+      ...existing,
+      lastPositionSeconds: 200,
+      completedAt: new Date(),
+    };
+
+    lessonProgressRepo.update.mockResolvedValue(
+      updated as unknown as UpdateResult,
+    );
+
+    const result = await useCase.execute({
+      userEmail,
+      lessonId,
+      seconds: 195,
+    });
+
+    expect(lessonProgressRepo.update).toHaveBeenCalledWith('p1', {
+      lastPositionSeconds: 200,
+      completedAt: expect.any(Date),
+    });
+    expect(result).toEqual(updated);
+  });
+
+  it('save lesson as completed when completed flag is true', async () => {
+    lessonProgressRepo.findOne.mockResolvedValue(null);
+    lessonRepository.findOne.mockResolvedValue({
+      id: 'p1',
+      durationSeconds: 1000,
+    } as Lesson);
+    lessonProgressRepo.save.mockImplementation(
+      async (data) => data as LessonProgress,
+    );
+
+    await useCase.execute({
+      userEmail,
+      lessonId,
+      completed: true,
+      seconds: undefined,
+    });
+
+    expect(lessonProgressRepo.save).toHaveBeenCalledWith({
+      userId: 'user-uuid',
+      lessonId,
+      lastPositionSeconds: 1000,
+      completedAt: expect.any(Date),
+    });
+  });
+
+  it('update lesson to completed when completed flag is true', async () => {
+    lessonProgressRepo.findOne.mockResolvedValue({
+      id: 'p1',
+      userId: 'user-uuid',
+      lessonId,
+      lastPositionSeconds: 100,
+      completedAt: null,
+    } as LessonProgress);
+    lessonRepository.findOne.mockResolvedValue({
+      id: 'p1',
+      durationSeconds: 1000,
+    } as Lesson);
+    lessonProgressRepo.save.mockImplementation(
+      async (data) => data as LessonProgress,
+    );
+
+    await useCase.execute({
+      userEmail,
+      lessonId,
+      completed: true,
+      seconds: undefined,
+    });
+
+    expect(lessonProgressRepo.update).toHaveBeenCalledWith('p1', {
+      lastPositionSeconds: 1000,
+      completedAt: expect.any(Date),
+    });
+  });
+
+  it('save lesson as completed when seconds are 96% of lesson duration', async () => {
+    lessonProgressRepo.findOne.mockResolvedValue(null);
+    lessonRepository.findOne.mockResolvedValue({
+      id: 'p1',
+      durationSeconds: 1000,
+    } as Lesson);
+    lessonProgressRepo.save.mockImplementation(
+      async (data) => data as LessonProgress,
+    );
+
+    await useCase.execute({
+      userEmail,
+      lessonId,
+      seconds: 960,
+    });
+
+    expect(lessonProgressRepo.save).toHaveBeenCalledWith({
+      userId: 'user-uuid',
+      lessonId,
+      lastPositionSeconds: 1000,
+      completedAt: expect.any(Date),
+    });
+  });
+
+  it('update lesson to completed when seconds are 96% of lesson duration', async () => {
+    lessonProgressRepo.findOne.mockResolvedValue({
+      id: 'p1',
+      userId: 'user-uuid',
+      lessonId,
+      lastPositionSeconds: 100,
+      completedAt: null,
+    } as LessonProgress);
+    lessonRepository.findOne.mockResolvedValue({
+      id: 'p1',
+      durationSeconds: 1000,
+    } as Lesson);
+    lessonProgressRepo.save.mockImplementation(
+      async (data) => data as LessonProgress,
+    );
+
+    await useCase.execute({
+      userEmail,
+      lessonId,
+      seconds: 960,
+    });
+
+    expect(lessonProgressRepo.update).toHaveBeenCalledWith('p1', {
+      lastPositionSeconds: 1000,
+      completedAt: expect.any(Date),
+    });
+  });
 });
