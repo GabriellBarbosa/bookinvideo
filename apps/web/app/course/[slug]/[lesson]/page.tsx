@@ -54,7 +54,10 @@ export default function Course() {
                       });
                     }}
                     onEnded={() => {
-                      console.log("terminou");
+                      lessonProgressMutate({
+                        lessonId: lesson.id,
+                        completed: true,
+                      });
                     }}
                   />
                 ) : (

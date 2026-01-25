@@ -2,8 +2,8 @@ import { useEffect, useRef } from "react";
 
 interface Params {
   videoId: string;
-  onPause: (arg?: any) => any;
-  onEnded: (arg?: any) => any;
+  onPause: (seconds: number) => void;
+  onEnded: () => void;
 }
 
 export function YouTubePlayer({ videoId, onPause, onEnded }: Params) {
@@ -34,11 +34,11 @@ export function YouTubePlayer({ videoId, onPause, onEnded }: Params) {
           onStateChange: (event: any) => {
             if (event.data === window.YT.PlayerState.PAUSED) {
               const seconds = playerRef?.current?.getCurrentTime?.() || 0;
-              onPause?.(Math.floor(seconds));
+              onPause(Math.floor(seconds));
             }
 
             if (event.data === window.YT.PlayerState.ENDED) {
-              onEnded?.();
+              onEnded();
             }
           },
         },

@@ -35,7 +35,8 @@ export const LessonBodySchema = z.object({
 export type LessonBody = z.infer<typeof LessonBodySchema>;
 
 export const LessonProgressBodySchema = z.object({
-  seconds: z.number(),
+  completed: z.boolean().optional(),
+  seconds: z.number().optional(),
   lessonId: z.uuid(),
   userEmail: z.string().min(1),
 });

@@ -7,9 +7,9 @@ import {
 } from "@bookinvideo/contracts";
 import { QueryFunctionContext } from "@tanstack/react-query";
 
-export type LessonProgressClientPayload = Pick<
+export type LessonProgressClientPayload = Omit<
   LessonProgressBody,
-  "lessonId" | "seconds"
+  "userEmail"
 >;
 
 export async function fetchCourseStructure(

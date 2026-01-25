@@ -21,6 +21,7 @@ export async function POST(req: Request) {
       userEmail: session.user.email,
       lessonId: body.lessonId,
       seconds: body.seconds,
+      completed: body.completed,
     }),
   });
 
