@@ -17,7 +17,7 @@ export async function fetchCourseStructure(
 ): Promise<CourseStructure> {
   const [, slug] = ctx.queryKey;
 
-  const res = await fetch(`${API_URL}/course/course-structure/${slug}`);
+  const res = await fetch(`/api/nest-proxy/course/course-structure/${slug}`);
 
   return res.json();
 }
