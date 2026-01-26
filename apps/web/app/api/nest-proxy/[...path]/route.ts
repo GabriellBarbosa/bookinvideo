@@ -6,6 +6,10 @@ if (!API_URL) {
   throw new Error("Missing env API_URL");
 }
 
+if (!process.env.INTERNAL_API_KEY) {
+  throw new Error("Missing env INTERNAL_API_KEY");
+}
+
 const HOP_BY_HOP_HEADERS = new Set([
   "connection",
   "keep-alive",
@@ -39,6 +43,7 @@ async function handler(
   // Clona headers e remove hop-by-hop
   const headers = new Headers(req.headers);
   for (const h of HOP_BY_HOP_HEADERS) headers.delete(h);
+  headers.set("x-internal-key", process.env.INTERNAL_API_KEY!);
 
   // Injeta identidade do usuário (escolha um padrão)
   const session = await getServerSession();
