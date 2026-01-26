@@ -6,6 +6,8 @@ import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './modules/user/user.module';
 import { CourseModule } from './modules/course/course.module';
 import { dataSourceOptions } from './db/datasource';
+import { APP_GUARD } from '@nestjs/core';
+import { ProxyAuthGuard } from './auth/proxy-auth.guard';
 
 @Module({
   imports: [
@@ -15,6 +17,12 @@ import { dataSourceOptions } from './db/datasource';
     CourseModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ProxyAuthGuard,
+    },
+  ],
 })
 export class AppModule {}

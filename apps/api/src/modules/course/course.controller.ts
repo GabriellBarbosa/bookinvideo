@@ -13,6 +13,8 @@ import {
   LessonProgressBodySchema,
   type LessonProgressBody,
 } from '@bookinvideo/contracts';
+import { User } from '@/auth/user.decorator';
+import { type AuthUser } from '@/auth/auth-user.type';
 
 @Controller('course')
 export class CourseController {
@@ -22,7 +24,10 @@ export class CourseController {
   ) {}
 
   @Get('/course-structure/:slug')
-  async getCourseStructure(@Param('slug') slug: string) {
+  async getCourseStructure(
+    @Param('slug') slug: string,
+    @User() user: AuthUser,
+  ) {
     const course = await this.courseService.getCourseStructure(slug);
 
     if (!course) {
