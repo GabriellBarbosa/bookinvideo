@@ -7,11 +7,6 @@ import {
 } from "@bookinvideo/contracts";
 import { QueryFunctionContext } from "@tanstack/react-query";
 
-export type LessonProgressClientPayload = Omit<
-  LessonProgressBody,
-  "userEmail"
->;
-
 export async function fetchCourseStructure(
   ctx: QueryFunctionContext<[string, string]>,
 ): Promise<CourseStructure> {
@@ -39,9 +34,9 @@ export async function fetchLesson(
 }
 
 export async function submitLessonProgress(
-  body: LessonProgressClientPayload,
+  body: LessonProgressBody,
 ): Promise<null> {
-  const res = await fetch(`/api/lesson-progress`, {
+  const res = await fetch(`/api/nest-proxy/course/lesson-progress`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

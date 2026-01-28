@@ -57,8 +57,11 @@ export class CourseController {
   }
 
   @Post('/lesson-progress')
-  async upsertLessonProgress(@Body() body: LessonProgressBody) {
+  async upsertLessonProgress(
+    @Body() body: LessonProgressBody,
+    @User() user: AuthUser,
+  ) {
     const parsedBody = LessonProgressBodySchema.parse(body);
-    return await this.upsertLessonProgressUseCase.execute(parsedBody);
+    return await this.upsertLessonProgressUseCase.execute(user, parsedBody);
   }
 }

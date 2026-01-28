@@ -56,6 +56,5 @@ export declare const LessonProgressBodySchema: z.ZodObject<{
     completed: z.ZodOptional<z.ZodBoolean>;
     seconds: z.ZodOptional<z.ZodNumber>;
     lessonId: z.ZodUUID;
-    userEmail: z.ZodString;
 }, z.core.$strip>;
 export type LessonProgressBody = z.infer<typeof LessonProgressBodySchema>;

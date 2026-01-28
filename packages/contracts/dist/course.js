@@ -32,5 +32,4 @@ exports.LessonProgressBodySchema = zod_1.z.object({
     completed: zod_1.z.boolean().optional(),
     seconds: zod_1.z.number().optional(),
     lessonId: zod_1.z.uuid(),
-    userEmail: zod_1.z.string().min(1),
 });

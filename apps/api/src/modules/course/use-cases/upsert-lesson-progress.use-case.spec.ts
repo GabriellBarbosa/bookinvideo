@@ -64,7 +64,10 @@ describe('UpsertLessonProgressUseCase', () => {
     userRepository.findOne.mockResolvedValue(null);
 
     await expect(
-      useCase.execute({ userEmail, lessonId, seconds: 120 }),
+      useCase.execute(
+        { email: userEmail },
+        { lessonId, seconds: 120 },
+      ),
     ).rejects.toBeInstanceOf(NotFoundException);
     expect(lessonProgressRepo.findOne).not.toHaveBeenCalled();
   });
@@ -73,7 +76,10 @@ describe('UpsertLessonProgressUseCase', () => {
     lessonRepository.findOne.mockResolvedValue(null);
 
     await expect(
-      useCase.execute({ userEmail, lessonId, seconds: 120 }),
+      useCase.execute(
+        { email: userEmail },
+        { lessonId, seconds: 120 },
+      ),
     ).rejects.toBeInstanceOf(NotFoundException);
     expect(lessonProgressRepo.findOne).not.toHaveBeenCalled();
   });
@@ -91,7 +97,10 @@ describe('UpsertLessonProgressUseCase', () => {
 
     lessonProgressRepo.save.mockResolvedValue(created as LessonProgress);
 
-    const result = await useCase.execute({ userEmail, lessonId, seconds: 120 });
+    const result = await useCase.execute(
+      { email: userEmail },
+      { lessonId, seconds: 120 },
+    );
 
     expect(lessonProgressRepo.findOne).toHaveBeenCalledWith({
       where: {
@@ -129,7 +138,10 @@ describe('UpsertLessonProgressUseCase', () => {
       updated as unknown as UpdateResult,
     );
 
-    const result = await useCase.execute({ userEmail, lessonId, seconds: 150 });
+    const result = await useCase.execute(
+      { email: userEmail },
+      { lessonId, seconds: 150 },
+    );
 
     expect(lessonProgressRepo.update).toHaveBeenCalledWith('p1', {
       lastPositionSeconds: 150,
@@ -148,7 +160,10 @@ describe('UpsertLessonProgressUseCase', () => {
 
     lessonProgressRepo.findOne.mockResolvedValue(existing as LessonProgress);
 
-    const result = await useCase.execute({ userEmail, lessonId, seconds: 150 });
+    const result = await useCase.execute(
+      { email: userEmail },
+      { lessonId, seconds: 150 },
+    );
 
     expect(lessonProgressRepo.update).not.toHaveBeenCalled();
     expect(lessonProgressRepo.save).not.toHaveBeenCalled();
@@ -168,7 +183,10 @@ describe('UpsertLessonProgressUseCase', () => {
 
     lessonProgressRepo.save.mockResolvedValue(created as LessonProgress);
 
-    await useCase.execute({ userEmail, lessonId, seconds: -10.7 });
+    await useCase.execute(
+      { email: userEmail },
+      { lessonId, seconds: -10.7 },
+    );
 
     expect(lessonProgressRepo.save).toHaveBeenCalledWith({
       userId: 'user-uuid',
@@ -180,12 +198,14 @@ describe('UpsertLessonProgressUseCase', () => {
 
   it('throws when neither seconds nor completion flag is provided', async () => {
     await expect(
-      useCase.execute({
-        userEmail,
-        lessonId,
-        completed: false,
-        seconds: undefined,
-      }),
+      useCase.execute(
+        { email: userEmail },
+        {
+          lessonId,
+          completed: false,
+          seconds: undefined,
+        },
+      ),
     ).rejects.toBeInstanceOf(Error);
 
     expect(lessonProgressRepo.findOne).not.toHaveBeenCalled();
@@ -214,11 +234,13 @@ describe('UpsertLessonProgressUseCase', () => {
       updated as unknown as UpdateResult,
     );
 
-    const result = await useCase.execute({
-      userEmail,
-      lessonId,
-      seconds: 195,
-    });
+    const result = await useCase.execute(
+      { email: userEmail },
+      {
+        lessonId,
+        seconds: 195,
+      },
+    );
 
     expect(lessonProgressRepo.update).toHaveBeenCalledWith('p1', {
       lastPositionSeconds: 200,
@@ -237,12 +259,14 @@ describe('UpsertLessonProgressUseCase', () => {
       async (data) => data as LessonProgress,
     );
 
-    await useCase.execute({
-      userEmail,
-      lessonId,
-      completed: true,
-      seconds: undefined,
-    });
+    await useCase.execute(
+      { email: userEmail },
+      {
+        lessonId,
+        completed: true,
+        seconds: undefined,
+      },
+    );
 
     expect(lessonProgressRepo.save).toHaveBeenCalledWith({
       userId: 'user-uuid',
@@ -268,12 +292,14 @@ describe('UpsertLessonProgressUseCase', () => {
       async (data) => data as LessonProgress,
     );
 
-    await useCase.execute({
-      userEmail,
-      lessonId,
-      completed: true,
-      seconds: undefined,
-    });
+    await useCase.execute(
+      { email: userEmail },
+      {
+        lessonId,
+        completed: true,
+        seconds: undefined,
+      },
+    );
 
     expect(lessonProgressRepo.update).toHaveBeenCalledWith('p1', {
       lastPositionSeconds: 1000,
@@ -291,11 +317,13 @@ describe('UpsertLessonProgressUseCase', () => {
       async (data) => data as LessonProgress,
     );
 
-    await useCase.execute({
-      userEmail,
-      lessonId,
-      seconds: 960,
-    });
+    await useCase.execute(
+      { email: userEmail },
+      {
+        lessonId,
+        seconds: 960,
+      },
+    );
 
     expect(lessonProgressRepo.save).toHaveBeenCalledWith({
       userId: 'user-uuid',
@@ -321,11 +349,13 @@ describe('UpsertLessonProgressUseCase', () => {
       async (data) => data as LessonProgress,
     );
 
-    await useCase.execute({
-      userEmail,
-      lessonId,
-      seconds: 960,
-    });
+    await useCase.execute(
+      { email: userEmail },
+      {
+        lessonId,
+        seconds: 960,
+      },
+    );
 
     expect(lessonProgressRepo.update).toHaveBeenCalledWith('p1', {
       lastPositionSeconds: 1000,

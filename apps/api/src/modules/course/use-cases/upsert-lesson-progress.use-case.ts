@@ -1,10 +1,11 @@
-import { NotFoundException } from '@nestjs/common';
+import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LessonProgress } from '../entities/lesson-progress.entity';
 import { Repository } from 'typeorm';
 import { LessonProgressBody } from '@bookinvideo/contracts';
 import { User } from '../../user/entities/user.entity';
 import { Lesson } from '../entities/lesson.entity';
+import { AuthUser } from '@/auth/auth-user.type';
 
 export class UpsertLessonProgressUseCase {
   constructor(
@@ -16,14 +17,21 @@ export class UpsertLessonProgressUseCase {
     private readonly lessonRepository: Repository<Lesson>,
   ) {}
 
-  async execute(input: LessonProgressBody) {
-    if ((input.seconds === undefined || input.seconds === 0) && !input.completed)
+  async execute(authUser: AuthUser, input: LessonProgressBody) {
+    if (!authUser) {
+      throw new ForbiddenException('User must be authenticated');
+    }
+
+    if (
+      (input.seconds === undefined || input.seconds === 0) &&
+      !input.completed
+    )
       throw new Error('seconds is required unless lesson is completed');
 
     const seconds = Math.max(0, Math.floor(input.seconds || 0));
 
     const user = await this.userRepository.findOne({
-      where: { email: input.userEmail },
+      where: { email: authUser.email },
     });
 
     if (!user) {
@@ -52,7 +60,7 @@ export class UpsertLessonProgressUseCase {
 
     if (!existing) {
       const lastPositionSeconds = shouldComplete
-        ? lesson.durationSeconds ?? seconds
+        ? (lesson.durationSeconds ?? seconds)
         : seconds;
 
       return this.lessonProgressRepository.save({
