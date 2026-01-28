@@ -20,6 +20,7 @@ const HOP_BY_HOP_HEADERS = new Set([
   "transfer-encoding",
   "upgrade",
   "host",
+  "content-length",
 ]);
 
 function buildTargetUrl(req: NextRequest, pathParts: string[]) {
@@ -53,12 +54,13 @@ async function handler(
 
   // Encaminha body (só para métodos com body)
   const method = req.method.toUpperCase();
-  const hasBody = !["GET", "HEAD"].includes(method);
+  const httpMethodHasBody = ["POST", "PUT", "PATCH"].includes(method);
+  const body = httpMethodHasBody ? await req.arrayBuffer() : undefined;
 
   const upstream = await fetch(targetUrl, {
     method,
     headers,
-    body: hasBody ? req.body : undefined,
+    body,
     cache: "no-store",
   });
 
