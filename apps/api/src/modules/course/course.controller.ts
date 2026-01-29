@@ -28,7 +28,7 @@ export class CourseController {
     @Param('slug') slug: string,
     @User() user: AuthUser,
   ) {
-    const course = await this.courseService.getCourseStructure(slug);
+    const course = await this.courseService.getCourseStructure(slug, user);
 
     if (!course) {
       throw new NotFoundException();

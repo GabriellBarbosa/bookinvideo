@@ -4,11 +4,15 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { CourseEntity } from './entities/course.entity';
 import { Repository } from 'typeorm';
 import { LessonEntity } from './entities/lesson.entity';
+import { LessonProgressEntity } from './entities/lesson-progress.entity';
+import { UserEntity } from '../user/entities/user.entity';
 
 describe('CourseService', () => {
   let service: CourseService;
   let courseRepo: jest.Mocked<Repository<CourseEntity>>;
   let lessonRepo: jest.Mocked<Repository<LessonEntity>>;
+  let lessonProgressRepo: jest.Mocked<Repository<LessonProgressEntity>>;
+  let userRepo: jest.Mocked<Repository<UserEntity>>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -26,12 +30,26 @@ describe('CourseService', () => {
             findOne: jest.fn(),
           },
         },
+        {
+          provide: getRepositoryToken(LessonProgressEntity),
+          useValue: {
+            find: jest.fn(),
+          },
+        },
+        {
+          provide: getRepositoryToken(UserEntity),
+          useValue: {
+            findOne: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
     service = module.get<CourseService>(CourseService);
     courseRepo = module.get(getRepositoryToken(CourseEntity));
     lessonRepo = module.get(getRepositoryToken(LessonEntity));
+    lessonProgressRepo = module.get(getRepositoryToken(LessonProgressEntity));
+    userRepo = module.get(getRepositoryToken(UserEntity));
   });
 
   it('mount course structure', async () => {
@@ -197,5 +215,82 @@ describe('CourseService', () => {
       position: 1,
       isFree: true,
     });
+  });
+
+  it('fill completed field when user is authenticated', async () => {
+    courseRepo.findOne.mockResolvedValue({
+      title: 'Código Limpo na Prática',
+      slug: 'clean-code',
+      modules: [
+        {
+          title: 'Introdução',
+          position: 1,
+          slug: 'intro',
+          lessons: [
+            {
+              id: 'lesson-1',
+              title: 'Introdução Código Limpo',
+              slug: 'clean-code-introduction',
+              videoId: '87e',
+              videoUrl: 'https://youtu.be/nbcfy6_v86A?si=HmTKO2b-uBpMEeUF',
+              durationSeconds: 943,
+              position: 1,
+              isFree: true,
+            },
+            {
+              id: 'lesson-2',
+              title: 'Princípios S.O.L.I.D',
+              slug: 'solid-principles',
+              videoId: 'xpto',
+              videoUrl: 'https://youtu.be/xpto',
+              durationSeconds: 1200,
+              position: 2,
+              isFree: false,
+            },
+          ],
+        },
+      ],
+    } as unknown as CourseEntity);
+
+    userRepo.findOne.mockResolvedValue({
+      uuid: 'user-1',
+      email: 'john@doe.com',
+    } as UserEntity);
+
+    lessonProgressRepo.find.mockResolvedValue([
+      {
+        lessonId: 'lesson-1',
+        completedAt: new Date(),
+      },
+    ] as LessonProgressEntity[]);
+
+    const result = await service.getCourseStructure('clean-code', {
+      email: 'john@doe.com',
+    });
+
+    expect(result?.modules[0].lessons).toEqual([
+      {
+        id: 'lesson-1',
+        title: 'Introdução Código Limpo',
+        slug: 'clean-code-introduction',
+        videoId: '87e',
+        videoUrl: 'https://youtu.be/nbcfy6_v86A?si=HmTKO2b-uBpMEeUF',
+        durationSeconds: 943,
+        position: 1,
+        isFree: true,
+        completed: true,
+      },
+      {
+        id: 'lesson-2',
+        title: 'Princípios S.O.L.I.D',
+        slug: 'solid-principles',
+        videoId: 'xpto',
+        videoUrl: 'https://youtu.be/xpto',
+        durationSeconds: 1200,
+        position: 2,
+        isFree: false,
+        completed: false,
+      },
+    ]);
   });
 });
