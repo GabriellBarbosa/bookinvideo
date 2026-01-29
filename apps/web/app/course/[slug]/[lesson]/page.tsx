@@ -11,6 +11,39 @@ import { useSubmitLessonProgress } from "./_hooks/use-lesson-progress";
 import { useQueryClient } from "@tanstack/react-query";
 import { CourseStructure } from "@bookinvideo/contracts";
 
+function markLessonCompletedInCache(
+  queryClient: ReturnType<typeof useQueryClient>,
+  courseSlug: string,
+  lessonSlug: string,
+) {
+  queryClient.setQueryData<CourseStructure | undefined>(
+    ["course", courseSlug],
+    (prev) => {
+      if (!prev) return prev;
+
+      return {
+        ...prev,
+        modules: prev.modules.map((module) => {
+          const hasLesson = module.lessons.some(
+            (moduleLesson) => moduleLesson.slug === lessonSlug,
+          );
+
+          if (!hasLesson) return module;
+
+          return {
+            ...module,
+            lessons: module.lessons.map((moduleLesson) =>
+              moduleLesson.slug === lessonSlug
+                ? { ...moduleLesson, completed: true }
+                : moduleLesson,
+            ),
+          };
+        }),
+      };
+    },
+  );
+}
+
 export default function Course() {
   const { slug: courseSlug, lesson: lessonSlug } = useParams();
   const searchParams = useSearchParams();
@@ -62,32 +95,10 @@ export default function Course() {
                         completed: true,
                       });
 
-                      queryClient.setQueryData<CourseStructure | undefined>(
-                        ["course", courseSlug],
-                        (prev) => {
-                          if (!prev) return prev;
-
-                          return {
-                            ...prev,
-                            modules: prev.modules.map((module) => {
-                              const hasLesson = module.lessons.some(
-                                (moduleLesson) =>
-                                  moduleLesson.slug === lessonSlug,
-                              );
-
-                              if (!hasLesson) return module;
-
-                              return {
-                                ...module,
-                                lessons: module.lessons.map((moduleLesson) =>
-                                  moduleLesson.slug === lessonSlug
-                                    ? { ...moduleLesson, completed: true }
-                                    : moduleLesson,
-                                ),
-                              };
-                            }),
-                          };
-                        },
+                      markLessonCompletedInCache(
+                        queryClient,
+                        courseSlug as string,
+                        lessonSlug as string,
                       );
                     }}
                   />
