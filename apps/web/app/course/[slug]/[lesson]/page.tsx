@@ -9,60 +9,41 @@ import { useLesson } from "./_hooks/use-lesson";
 import { YouTubePlayer } from "./_components/YoutubePlayer";
 import { useSubmitLessonProgress } from "./_hooks/use-lesson-progress";
 import { useQueryClient } from "@tanstack/react-query";
-import { CourseStructure } from "@bookinvideo/contracts";
-
-function markLessonCompletedInCache(
-  queryClient: ReturnType<typeof useQueryClient>,
-  courseSlug: string,
-  lessonSlug: string,
-) {
-  queryClient.setQueryData<CourseStructure | undefined>(
-    ["course", courseSlug],
-    (prev) => {
-      if (!prev) return prev;
-
-      return {
-        ...prev,
-        modules: prev.modules.map((module) => {
-          const hasLesson = module.lessons.some(
-            (moduleLesson) => moduleLesson.slug === lessonSlug,
-          );
-
-          if (!hasLesson) return module;
-
-          return {
-            ...module,
-            lessons: module.lessons.map((moduleLesson) =>
-              moduleLesson.slug === lessonSlug
-                ? { ...moduleLesson, completed: true }
-                : moduleLesson,
-            ),
-          };
-        }),
-      };
-    },
-  );
-}
+import { Button } from "@/components/ui/button";
+import { useCacheLessonCompletion } from "./_hooks/use-cache-lesson-completion";
 
 export default function Course() {
-  const { slug: courseSlug, lesson: lessonSlug } = useParams();
-  const searchParams = useSearchParams();
-  const moduleSlug = searchParams.get("module");
   const queryClient = useQueryClient();
+  const searchParams = useSearchParams();
 
-  const { data: courseStructure, isLoading: courseStructureLoading } =
-    useCourseStructure(courseSlug as string);
-
+  const moduleSlug = searchParams.get("module");
+  const { slug: courseSlug, lesson: lessonSlug } = useParams();
   const { data: lesson, isLoading: lessonLoading } = useLesson({
     courseSlug: courseSlug as string,
     lessonSlug: lessonSlug as string,
     moduleSlug,
   });
-
+  
   const { mutate: lessonProgressMutate } = useSubmitLessonProgress();
+  const { markLessonCompletedInCache } = useCacheLessonCompletion();
+  const { data: courseStructure, isLoading: courseStructureLoading } =
+    useCourseStructure(courseSlug as string);
+
+  const handleCompleteLesson = (lessonId: string) => {
+    lessonProgressMutate({
+      completed: true,
+      lessonId,
+    });
+
+    markLessonCompletedInCache(
+      queryClient,
+      courseSlug as string,
+      lessonSlug as string,
+    );
+  };
 
   if (courseStructureLoading || lessonLoading) {
-    return <div>Carregando</div>;
+    return <div>Carregando...</div>;
   }
 
   if (!courseStructure || !lesson) {
@@ -90,16 +71,7 @@ export default function Course() {
                       });
                     }}
                     onEnded={() => {
-                      lessonProgressMutate({
-                        lessonId: lesson.id,
-                        completed: true,
-                      });
-
-                      markLessonCompletedInCache(
-                        queryClient,
-                        courseSlug as string,
-                        lessonSlug as string,
-                      );
+                      handleCompleteLesson(lesson.id);
                     }}
                   />
                 ) : (
@@ -110,9 +82,18 @@ export default function Course() {
               </div>
 
               <div className="space-y-2">
-                <h1 className="text-2xl font-semibold leading-tight">
-                  {lesson.title}
-                </h1>
+                <div className="flex items-center justify-between gap-4">
+                  <h1 className="text-2xl font-semibold leading-tight">
+                    {lesson.title}
+                  </h1>
+
+                  <Button
+                    size="sm"
+                    onClick={() => handleCompleteLesson(lesson.id)}
+                  >
+                    concluir
+                  </Button>
+                </div>
               </div>
             </section>
           </main>
