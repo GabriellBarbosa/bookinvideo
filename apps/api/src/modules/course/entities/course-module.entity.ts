@@ -9,24 +9,24 @@ import {
   OneToMany,
   JoinColumn,
 } from 'typeorm';
-import { Course } from './course.entity';
-import { Lesson } from './lesson.entity';
+import { CourseEntity } from './course.entity';
+import { LessonEntity } from './lesson.entity';
 
 @Entity({ name: 'course_modules' })
 @Index(['courseId', 'slug'], { unique: true })
-export class CourseModule {
+export class CourseModuleEntity {
   @PrimaryGeneratedColumn('uuid', { name: 'id' })
   id: string;
 
   @Column({ type: 'uuid', name: 'course_id' })
   courseId: string;
 
-  @ManyToOne(() => Course, { onDelete: 'CASCADE' })
+  @ManyToOne(() => CourseEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'course_id' })
-  course: Course;
+  course: CourseEntity;
 
-  @OneToMany(() => Lesson, (lesson) => lesson.module)
-  lessons: Lesson[];
+  @OneToMany(() => LessonEntity, (lesson) => lesson.module)
+  lessons: LessonEntity[];
 
   @Column({ type: 'varchar', length: 200, name: 'title' })
   title: string;

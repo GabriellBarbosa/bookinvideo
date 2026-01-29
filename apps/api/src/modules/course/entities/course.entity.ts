@@ -7,10 +7,10 @@ import {
   Index,
   OneToMany,
 } from 'typeorm';
-import { CourseModule } from './course-module.entity';
+import { CourseModuleEntity } from './course-module.entity';
 
 @Entity({ name: 'courses' })
-export class Course {
+export class CourseEntity {
   @PrimaryGeneratedColumn('uuid', { name: 'id' })
   id: string;
 
@@ -60,6 +60,6 @@ export class Course {
   @UpdateDateColumn({ type: 'timestamptz', name: 'updated_at' })
   updatedAt: Date;
 
-  @OneToMany(() => CourseModule, (module) => module.course)
-  modules: CourseModule[];
+  @OneToMany(() => CourseModuleEntity, (module) => module.course)
+  modules: CourseModuleEntity[];
 }

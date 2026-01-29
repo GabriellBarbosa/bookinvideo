@@ -1,14 +1,14 @@
 import { DataSource } from 'typeorm';
-import { CourseModule } from '@/modules/course/entities/course-module.entity';
-import { Lesson } from '@/modules/course/entities/lesson.entity';
-import { Course } from '@/modules/course/entities/course.entity';
+import { CourseModuleEntity } from '@/modules/course/entities/course-module.entity';
+import { LessonEntity } from '@/modules/course/entities/lesson.entity';
+import { CourseEntity } from '@/modules/course/entities/course.entity';
 
 export async function seedLessons(
   dataSource: DataSource,
-  modules: CourseModule[],
-  course: Course,
+  modules: CourseModuleEntity[],
+  course: CourseEntity,
 ) {
-  const repo = dataSource.getRepository(Lesson);
+  const repo = dataSource.getRepository(LessonEntity);
 
   const lessonsByModule = {
     Introdução: [

@@ -1,27 +1,27 @@
 import { NotFoundException } from '@nestjs/common';
 import { Repository, UpdateResult } from 'typeorm';
-import { LessonProgress } from '../entities/lesson-progress.entity';
-import { Lesson } from '../entities/lesson.entity';
+import { LessonProgressEntity } from '../entities/lesson-progress.entity';
+import { LessonEntity } from '../entities/lesson.entity';
 import { UpsertLessonProgressUseCase } from './upsert-lesson-progress.use-case';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Test, TestingModule } from '@nestjs/testing';
-import { User } from '../../user/entities/user.entity';
+import { UserEntity } from '../../user/entities/user.entity';
 
 describe('UpsertLessonProgressUseCase', () => {
   const userEmail = 'tests@green.com';
   const lessonId = 'lesson-1';
 
   let useCase: UpsertLessonProgressUseCase;
-  let lessonProgressRepo: jest.Mocked<Repository<LessonProgress>>;
-  let lessonRepository: jest.Mocked<Repository<Lesson>>;
-  let userRepository: jest.Mocked<Repository<User>>;
+  let lessonProgressRepo: jest.Mocked<Repository<LessonProgressEntity>>;
+  let lessonRepository: jest.Mocked<Repository<LessonEntity>>;
+  let userRepository: jest.Mocked<Repository<UserEntity>>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UpsertLessonProgressUseCase,
         {
-          provide: getRepositoryToken(LessonProgress),
+          provide: getRepositoryToken(LessonProgressEntity),
           useValue: {
             findOne: jest.fn(),
             save: jest.fn(),
@@ -29,13 +29,13 @@ describe('UpsertLessonProgressUseCase', () => {
           },
         },
         {
-          provide: getRepositoryToken(Lesson),
+          provide: getRepositoryToken(LessonEntity),
           useValue: {
             findOne: jest.fn(),
           },
         },
         {
-          provide: getRepositoryToken(User),
+          provide: getRepositoryToken(UserEntity),
           useValue: {
             findOne: jest.fn(),
           },
@@ -46,18 +46,18 @@ describe('UpsertLessonProgressUseCase', () => {
     useCase = module.get<UpsertLessonProgressUseCase>(
       UpsertLessonProgressUseCase,
     );
-    lessonProgressRepo = module.get(getRepositoryToken(LessonProgress));
-    lessonRepository = module.get(getRepositoryToken(Lesson));
-    userRepository = module.get(getRepositoryToken(User));
+    lessonProgressRepo = module.get(getRepositoryToken(LessonProgressEntity));
+    lessonRepository = module.get(getRepositoryToken(LessonEntity));
+    userRepository = module.get(getRepositoryToken(UserEntity));
 
     userRepository.findOne.mockResolvedValue({
       uuid: 'user-uuid',
       email: userEmail,
-    } as User);
+    } as UserEntity);
     lessonRepository.findOne.mockResolvedValue({
       id: lessonId,
       durationSeconds: 200,
-    } as Lesson);
+    } as LessonEntity);
   });
 
   it('throws when user does not exist', async () => {
@@ -95,7 +95,7 @@ describe('UpsertLessonProgressUseCase', () => {
       completedAt: null,
     };
 
-    lessonProgressRepo.save.mockResolvedValue(created as LessonProgress);
+    lessonProgressRepo.save.mockResolvedValue(created as LessonProgressEntity);
 
     const result = await useCase.execute(
       { email: userEmail },
@@ -127,7 +127,7 @@ describe('UpsertLessonProgressUseCase', () => {
       completedAt: null,
     };
 
-    lessonProgressRepo.findOne.mockResolvedValue(existing as LessonProgress);
+    lessonProgressRepo.findOne.mockResolvedValue(existing as LessonProgressEntity);
 
     const updated = {
       ...existing,
@@ -158,7 +158,7 @@ describe('UpsertLessonProgressUseCase', () => {
       completedAt: null,
     };
 
-    lessonProgressRepo.findOne.mockResolvedValue(existing as LessonProgress);
+    lessonProgressRepo.findOne.mockResolvedValue(existing as LessonProgressEntity);
 
     const result = await useCase.execute(
       { email: userEmail },
@@ -181,7 +181,7 @@ describe('UpsertLessonProgressUseCase', () => {
       completedAt: null,
     };
 
-    lessonProgressRepo.save.mockResolvedValue(created as LessonProgress);
+    lessonProgressRepo.save.mockResolvedValue(created as LessonProgressEntity);
 
     await useCase.execute(
       { email: userEmail },
@@ -222,7 +222,7 @@ describe('UpsertLessonProgressUseCase', () => {
       completedAt: null,
     };
 
-    lessonProgressRepo.findOne.mockResolvedValue(existing as LessonProgress);
+    lessonProgressRepo.findOne.mockResolvedValue(existing as LessonProgressEntity);
 
     const updated = {
       ...existing,
@@ -254,9 +254,9 @@ describe('UpsertLessonProgressUseCase', () => {
     lessonRepository.findOne.mockResolvedValue({
       id: 'p1',
       durationSeconds: 1000,
-    } as Lesson);
+    } as LessonEntity);
     lessonProgressRepo.save.mockImplementation(
-      async (data) => data as LessonProgress,
+      async (data) => data as LessonProgressEntity,
     );
 
     await useCase.execute(
@@ -283,13 +283,13 @@ describe('UpsertLessonProgressUseCase', () => {
       lessonId,
       lastPositionSeconds: 100,
       completedAt: null,
-    } as LessonProgress);
+    } as LessonProgressEntity);
     lessonRepository.findOne.mockResolvedValue({
       id: 'p1',
       durationSeconds: 1000,
-    } as Lesson);
+    } as LessonEntity);
     lessonProgressRepo.save.mockImplementation(
-      async (data) => data as LessonProgress,
+      async (data) => data as LessonProgressEntity,
     );
 
     await useCase.execute(
@@ -312,9 +312,9 @@ describe('UpsertLessonProgressUseCase', () => {
     lessonRepository.findOne.mockResolvedValue({
       id: 'p1',
       durationSeconds: 1000,
-    } as Lesson);
+    } as LessonEntity);
     lessonProgressRepo.save.mockImplementation(
-      async (data) => data as LessonProgress,
+      async (data) => data as LessonProgressEntity,
     );
 
     await useCase.execute(
@@ -340,13 +340,13 @@ describe('UpsertLessonProgressUseCase', () => {
       lessonId,
       lastPositionSeconds: 100,
       completedAt: null,
-    } as LessonProgress);
+    } as LessonProgressEntity);
     lessonRepository.findOne.mockResolvedValue({
       id: 'p1',
       durationSeconds: 1000,
-    } as Lesson);
+    } as LessonEntity);
     lessonProgressRepo.save.mockImplementation(
-      async (data) => data as LessonProgress,
+      async (data) => data as LessonProgressEntity,
     );
 
     await useCase.execute(

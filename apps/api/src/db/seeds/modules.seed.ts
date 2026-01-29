@@ -1,10 +1,13 @@
 // src/database/seeds/modules.seed.ts
 import { DataSource } from 'typeorm';
-import { Course } from '@/modules/course/entities/course.entity';
-import { CourseModule } from '@/modules/course/entities/course-module.entity';
+import { CourseEntity } from '@/modules/course/entities/course.entity';
+import { CourseModuleEntity } from '@/modules/course/entities/course-module.entity';
 
-export async function seedModules(dataSource: DataSource, course: Course) {
-  const repo = dataSource.getRepository(CourseModule);
+export async function seedModules(
+  dataSource: DataSource,
+  course: CourseEntity,
+) {
+  const repo = dataSource.getRepository(CourseModuleEntity);
 
   const modulesData = [
     { title: 'Introdução', position: 1, slug: 'intro' },
@@ -12,7 +15,7 @@ export async function seedModules(dataSource: DataSource, course: Course) {
     { title: 'Funções', position: 3, slug: 'functions' },
   ];
 
-  const modules: CourseModule[] = [];
+  const modules: CourseModuleEntity[] = [];
 
   for (const data of modulesData) {
     const exists = await repo.findOne({

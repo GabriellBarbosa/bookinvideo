@@ -1,21 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Course } from './entities/course.entity';
+import { CourseEntity } from './entities/course.entity';
 import { Repository } from 'typeorm';
 import {
   CourseStructure,
   LessonBody,
   Lesson as LessonType,
 } from '@bookinvideo/contracts';
-import { Lesson } from './entities/lesson.entity';
+import { LessonEntity } from './entities/lesson.entity';
 
 @Injectable()
 export class CourseService {
   constructor(
-    @InjectRepository(Course)
-    private readonly courseRepository: Repository<Course>,
-    @InjectRepository(Lesson)
-    private readonly lessonRepository: Repository<Lesson>,
+    @InjectRepository(CourseEntity)
+    private readonly courseRepository: Repository<CourseEntity>,
+    @InjectRepository(LessonEntity)
+    private readonly lessonRepository: Repository<LessonEntity>,
   ) {}
 
   async getCourseStructure(slug: string) {
@@ -43,7 +43,7 @@ export class CourseService {
     return this.mountCourseStructure(course);
   }
 
-  private mountCourseStructure(course: Course): CourseStructure {
+  private mountCourseStructure(course: CourseEntity): CourseStructure {
     return {
       title: course.title,
       slug: course.slug,

@@ -8,8 +8,8 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { Course } from './course.entity';
-import { CourseModule } from './course-module.entity';
+import { CourseModuleEntity } from './course-module.entity';
+import { CourseEntity } from './course.entity';
 
 export enum LessonStatus {
   DRAFT = 'draft',
@@ -30,7 +30,7 @@ export enum LessonContentType {
 
 @Entity({ name: 'lessons' })
 @Index(['moduleId', 'slug'], { unique: true })
-export class Lesson {
+export class LessonEntity {
   @PrimaryGeneratedColumn('uuid', { name: 'id' })
   id: string;
 
@@ -40,19 +40,19 @@ export class Lesson {
   @Column({ type: 'uuid', name: 'course_id' })
   courseId: string | null;
 
-  @ManyToOne(() => Course, { onDelete: 'CASCADE' })
+  @ManyToOne(() => CourseEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'course_id' })
-  course: Course;
+  course: CourseEntity;
 
   @Column({ type: 'uuid', name: 'module_id' })
   moduleId: string | null;
 
-  @ManyToOne(() => CourseModule, (m) => m.lessons, {
+  @ManyToOne(() => CourseModuleEntity, (m) => m.lessons, {
     nullable: true,
     onDelete: 'SET NULL',
   })
   @JoinColumn({ name: 'module_id' })
-  module: CourseModule | null;
+  module: CourseModuleEntity | null;
 
   @Column({ type: 'varchar', length: 200, name: 'title' })
   title: string;

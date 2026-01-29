@@ -1,27 +1,27 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CourseService } from './course.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Course } from './entities/course.entity';
+import { CourseEntity } from './entities/course.entity';
 import { Repository } from 'typeorm';
-import { Lesson } from './entities/lesson.entity';
+import { LessonEntity } from './entities/lesson.entity';
 
 describe('CourseService', () => {
   let service: CourseService;
-  let courseRepo: jest.Mocked<Repository<Course>>;
-  let lessonRepo: jest.Mocked<Repository<Lesson>>;
+  let courseRepo: jest.Mocked<Repository<CourseEntity>>;
+  let lessonRepo: jest.Mocked<Repository<LessonEntity>>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CourseService,
         {
-          provide: getRepositoryToken(Course),
+          provide: getRepositoryToken(CourseEntity),
           useValue: {
             findOne: jest.fn(),
           },
         },
         {
-          provide: getRepositoryToken(Lesson),
+          provide: getRepositoryToken(LessonEntity),
           useValue: {
             findOne: jest.fn(),
           },
@@ -30,8 +30,8 @@ describe('CourseService', () => {
     }).compile();
 
     service = module.get<CourseService>(CourseService);
-    courseRepo = module.get(getRepositoryToken(Course));
-    lessonRepo = module.get(getRepositoryToken(Lesson));
+    courseRepo = module.get(getRepositoryToken(CourseEntity));
+    lessonRepo = module.get(getRepositoryToken(LessonEntity));
   });
 
   it('mount course structure', async () => {
@@ -55,7 +55,7 @@ describe('CourseService', () => {
           ],
         },
       ],
-    } as unknown as Course);
+    } as unknown as CourseEntity);
 
     const result = await service.getCourseStructure('clean-code');
 
@@ -130,7 +130,7 @@ describe('CourseService', () => {
           updatedAt: '2026-01-09T00:02:49.522Z',
         },
       ],
-    } as unknown as Course);
+    } as unknown as CourseEntity);
 
     const result = await service.getCourseStructure('clean-code');
 
@@ -178,7 +178,7 @@ describe('CourseService', () => {
       publishedAt: null,
       createdAt: '2026-01-09T00:08:49.064Z',
       updatedAt: '2026-01-09T00:08:49.064Z',
-    } as unknown as Lesson);
+    } as unknown as LessonEntity);
 
     const result = await service.getLesson({
       courseSlug: 'clean-code',

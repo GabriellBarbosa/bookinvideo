@@ -1,8 +1,8 @@
 import { DataSource } from 'typeorm';
-import { Course } from '@/modules/course/entities/course.entity';
+import { CourseEntity } from '@/modules/course/entities/course.entity';
 
 export async function seedCourses(dataSource: DataSource) {
-  const repo = dataSource.getRepository(Course);
+  const repo = dataSource.getRepository(CourseEntity);
 
   const slug = 'clean-code';
 

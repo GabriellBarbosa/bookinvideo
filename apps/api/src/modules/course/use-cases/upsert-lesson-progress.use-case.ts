@@ -1,20 +1,20 @@
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LessonProgress } from '../entities/lesson-progress.entity';
+import { LessonProgressEntity } from '../entities/lesson-progress.entity';
 import { Repository } from 'typeorm';
 import { LessonProgressBody } from '@bookinvideo/contracts';
-import { User } from '../../user/entities/user.entity';
-import { Lesson } from '../entities/lesson.entity';
+import { UserEntity } from '../../user/entities/user.entity';
+import { LessonEntity } from '../entities/lesson.entity';
 import { AuthUser } from '@/auth/auth-user.type';
 
 export class UpsertLessonProgressUseCase {
   constructor(
-    @InjectRepository(LessonProgress)
-    private readonly lessonProgressRepository: Repository<LessonProgress>,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
-    @InjectRepository(Lesson)
-    private readonly lessonRepository: Repository<Lesson>,
+    @InjectRepository(LessonProgressEntity)
+    private readonly lessonProgressRepository: Repository<LessonProgressEntity>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(LessonEntity)
+    private readonly lessonRepository: Repository<LessonEntity>,
   ) {}
 
   async execute(authUser: AuthUser, input: LessonProgressBody) {

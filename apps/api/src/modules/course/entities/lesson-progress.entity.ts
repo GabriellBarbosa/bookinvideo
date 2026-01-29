@@ -8,28 +8,28 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { Lesson } from './lesson.entity';
-import { User } from '../../user/entities/user.entity';
+import { LessonEntity } from './lesson.entity';
+import { UserEntity } from '../../user/entities/user.entity';
 
 @Entity({ name: 'lesson_progress' })
 @Index(['userId', 'lessonId'], { unique: true })
-export class LessonProgress {
+export class LessonProgressEntity {
   @PrimaryGeneratedColumn('uuid', { name: 'id' })
   id: string;
 
   @Column({ type: 'uuid', name: 'user_id' })
   userId: string;
 
-  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @ManyToOne(() => UserEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
-  user: User;
+  user: UserEntity;
 
   @Column({ type: 'uuid', name: 'lesson_id' })
   lessonId: string;
 
-  @ManyToOne(() => Lesson, { onDelete: 'CASCADE' })
+  @ManyToOne(() => LessonEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'lesson_id' })
-  lesson: Lesson;
+  lesson: LessonEntity;
 
   @Column({ type: 'int', nullable: true, name: 'last_position_seconds' })
   lastPositionSeconds: number | null;

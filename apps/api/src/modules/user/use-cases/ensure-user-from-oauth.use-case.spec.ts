@@ -2,12 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import type { Repository } from 'typeorm';
 import { EnsureUserFromOAuthUseCase } from './ensure-user-from-oauth.use-case';
-import { User } from '../entities/user.entity';
+import { UserEntity } from '../entities/user.entity';
 import { CreateUserBody } from '@bookinvideo/contracts';
 
 describe('EnsureUserFromOAuthUseCase', () => {
   let useCase: EnsureUserFromOAuthUseCase;
-  let userRepo: jest.Mocked<Repository<User>>;
+  let userRepo: jest.Mocked<Repository<UserEntity>>;
 
   const makeProfile = (
     overrides: Partial<CreateUserBody> = {},
@@ -25,7 +25,7 @@ describe('EnsureUserFromOAuthUseCase', () => {
       providers: [
         EnsureUserFromOAuthUseCase,
         {
-          provide: getRepositoryToken(User),
+          provide: getRepositoryToken(UserEntity),
           useValue: {
             findOne: jest.fn(),
             create: jest.fn(),
@@ -36,7 +36,7 @@ describe('EnsureUserFromOAuthUseCase', () => {
     }).compile();
 
     useCase = module.get(EnsureUserFromOAuthUseCase);
-    userRepo = module.get(getRepositoryToken(User));
+    userRepo = module.get(getRepositoryToken(UserEntity));
   });
 
   afterEach(() => {
@@ -55,9 +55,9 @@ describe('EnsureUserFromOAuthUseCase', () => {
       provider: profile.provider,
       providerUserId: profile.providerUserId,
       avatarUrl: profile.avatarUrl,
-    } as unknown as User);
+    } as unknown as UserEntity);
 
-    userRepo.save.mockImplementation(async (u) => u as User);
+    userRepo.save.mockImplementation(async (u) => u as UserEntity);
 
     const result = await useCase.execute(profile);
 
@@ -76,13 +76,13 @@ describe('EnsureUserFromOAuthUseCase', () => {
   it('returns user it it already exists', async () => {
     const profile = makeProfile({ name: 'Gabriel Almeida' });
 
-    const existingUser = {
+    const existingUserEntity = {
       id: 'user-1',
       email: 'old@email.com',
       name: 'Old Name',
-    } as unknown as User;
+    } as unknown as UserEntity;
 
-    userRepo.findOne.mockResolvedValue(existingUser);
+    userRepo.findOne.mockResolvedValue(existingUserEntity);
 
     const result = await useCase.execute(profile);
 
