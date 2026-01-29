@@ -49,11 +49,15 @@ export function CourseSidebar({ courseStructure }: Props) {
                           href={ROUTES.course(
                             courseStructure.slug,
                             module.slug,
-                            lesson.slug
+                            lesson.slug,
                           )}
                         >
                           <span>{lesson.title}</span>
-                          <span className="w-[6px] h-[6px] rounded-full bg-green-400"></span>
+                          {lesson.completed ? (
+                            <span className="w-[6px] h-[6px] rounded-full bg-destructive" aria-label="aula completa"></span>
+                          ) : (
+                            <span className="w-[6px] h-[6px] rounded-full border" aria-label="aula não completa"></span>
+                          )}
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>

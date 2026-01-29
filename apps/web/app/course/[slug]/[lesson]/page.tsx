@@ -8,11 +8,14 @@ import { CourseSidebar } from "./_components/CourseSidebar";
 import { useLesson } from "./_hooks/use-lesson";
 import { YouTubePlayer } from "./_components/YoutubePlayer";
 import { useSubmitLessonProgress } from "./_hooks/use-lesson-progress";
+import { useQueryClient } from "@tanstack/react-query";
+import { CourseStructure } from "@bookinvideo/contracts";
 
 export default function Course() {
   const { slug: courseSlug, lesson: lessonSlug } = useParams();
   const searchParams = useSearchParams();
   const moduleSlug = searchParams.get("module");
+  const queryClient = useQueryClient();
 
   const { data: courseStructure, isLoading: courseStructureLoading } =
     useCourseStructure(courseSlug as string);
@@ -34,7 +37,7 @@ export default function Course() {
   }
 
   return (
-    <div>
+    <div className="bg-purple-600">
       <SidebarProvider>
         <CourseSidebar courseStructure={courseStructure} />
 
@@ -58,6 +61,34 @@ export default function Course() {
                         lessonId: lesson.id,
                         completed: true,
                       });
+
+                      queryClient.setQueryData<CourseStructure | undefined>(
+                        ["course", courseSlug],
+                        (prev) => {
+                          if (!prev) return prev;
+
+                          return {
+                            ...prev,
+                            modules: prev.modules.map((module) => {
+                              const hasLesson = module.lessons.some(
+                                (moduleLesson) =>
+                                  moduleLesson.slug === lessonSlug,
+                              );
+
+                              if (!hasLesson) return module;
+
+                              return {
+                                ...module,
+                                lessons: module.lessons.map((moduleLesson) =>
+                                  moduleLesson.slug === lessonSlug
+                                    ? { ...moduleLesson, completed: true }
+                                    : moduleLesson,
+                                ),
+                              };
+                            }),
+                          };
+                        },
+                      );
                     }}
                   />
                 ) : (
