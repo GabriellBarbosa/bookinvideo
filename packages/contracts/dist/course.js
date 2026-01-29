@@ -11,6 +11,7 @@ exports.LessonSchema = zod_1.z.object({
     durationSeconds: zod_1.z.number().nullable(),
     position: zod_1.z.number().int().positive(),
     isFree: zod_1.z.boolean(),
+    completed: zod_1.z.boolean().optional()
 });
 exports.ModuleSchema = zod_1.z.object({
     title: zod_1.z.string().min(1),

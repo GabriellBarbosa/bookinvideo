@@ -9,6 +9,7 @@ export const LessonSchema = z.object({
   durationSeconds: z.number().nullable(),
   position: z.number().int().positive(),
   isFree: z.boolean(),
+  completed: z.boolean().optional()
 });
 export type Lesson = z.infer<typeof LessonSchema>;
 

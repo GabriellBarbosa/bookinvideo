@@ -8,6 +8,7 @@ export declare const LessonSchema: z.ZodObject<{
     durationSeconds: z.ZodNullable<z.ZodNumber>;
     position: z.ZodNumber;
     isFree: z.ZodBoolean;
+    completed: z.ZodOptional<z.ZodBoolean>;
 }, z.core.$strip>;
 export type Lesson = z.infer<typeof LessonSchema>;
 export declare const ModuleSchema: z.ZodObject<{
@@ -23,6 +24,7 @@ export declare const ModuleSchema: z.ZodObject<{
         durationSeconds: z.ZodNullable<z.ZodNumber>;
         position: z.ZodNumber;
         isFree: z.ZodBoolean;
+        completed: z.ZodOptional<z.ZodBoolean>;
     }, z.core.$strip>>;
 }, z.core.$strip>;
 export type Module = z.infer<typeof ModuleSchema>;
@@ -42,6 +44,7 @@ export declare const CourseStructureSchema: z.ZodObject<{
             durationSeconds: z.ZodNullable<z.ZodNumber>;
             position: z.ZodNumber;
             isFree: z.ZodBoolean;
+            completed: z.ZodOptional<z.ZodBoolean>;
         }, z.core.$strip>>;
     }, z.core.$strip>>;
 }, z.core.$strip>;
