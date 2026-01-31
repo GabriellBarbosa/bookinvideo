@@ -1,4 +1,4 @@
-import { fetchLesson } from "@/api/course.api";
+import { fetchLesson } from "@/services/course.api";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 
