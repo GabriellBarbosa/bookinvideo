@@ -23,7 +23,7 @@ export default function Course() {
     lessonSlug: lessonSlug as string,
     moduleSlug,
   });
-  
+
   const { mutate: lessonProgressMutate } = useSubmitLessonProgress();
   const { markLessonCompletedInCache } = useCacheLessonCompletion();
   const { data: courseStructure, isLoading: courseStructureLoading } =
@@ -51,7 +51,7 @@ export default function Course() {
   }
 
   return (
-    <div className="bg-purple-600">
+    <div>
       <SidebarProvider>
         <CourseSidebar courseStructure={courseStructure} />
 
