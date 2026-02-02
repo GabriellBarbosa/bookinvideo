@@ -1,4 +1,4 @@
-import { fetchCourseStructure } from "@/services/course.api";
+import { fetchCourseStructure } from "@/services/course.service";
 import { useQuery } from "@tanstack/react-query";
 
 export function useCourseStructure(courseSlug: string) {
