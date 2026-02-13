@@ -59,7 +59,7 @@ export default function Course() {
           <CourseHeader />
 
           <main className="p-6">
-            <section className="space-y-4">
+            <section className="max-w-[1200px] space-y-4 mx-auto">
               <div className="overflow-hidden rounded-xl border bg-muted">
                 {lesson.videoId ? (
                   <YouTubePlayer
