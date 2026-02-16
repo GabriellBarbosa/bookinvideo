@@ -34,7 +34,7 @@ export function CourseSidebar({ courseStructure }: Props) {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarGroupContent>
+      <SidebarGroupContent className="overflow-y-auto pb-10">
         <SidebarMenu>
           {courseStructure.modules.map((module: Module, index: number) => (
             <SidebarGroup key={index}>
