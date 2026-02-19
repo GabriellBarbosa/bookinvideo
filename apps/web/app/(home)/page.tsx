@@ -91,17 +91,17 @@ export default function Home() {
               <button className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-amber-400 via-amber-500 to-orange-600 px-6 py-3 text-base font-semibold text-slate-950 shadow-lg shadow-amber-400/30 transition hover:scale-[1.01] hover:shadow-amber-300/40">
                 Garantir minha vaga
               </button>
-              <button className="inline-flex items-center justify-center rounded-full border border-white/15 px-6 py-3 text-base font-semibold text-white transition hover:border-amber-400/60 hover:text-amber-100">
-                <Link
-                  href={ROUTES.course(
-                    "clean-code",
-                    "intro",
-                    "clean-code-introduction",
-                  )}
-                >
+              <Link
+                href={ROUTES.course(
+                  "clean-code",
+                  "intro",
+                  "clean-code-introduction",
+                )}
+              >
+                <button className="inline-flex items-center justify-center rounded-full border border-white/15 px-6 py-3 text-base font-semibold text-white transition hover:border-amber-400/60 hover:text-amber-100">
                   Ver conteúdo completo
-                </Link>
-              </button>
+                </button>
+              </Link>
             </div>
           </div>
 

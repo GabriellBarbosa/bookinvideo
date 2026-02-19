@@ -13,6 +13,8 @@ export async function seedModules(
     { title: 'Introdução', position: 1, slug: 'intro' },
     { title: 'Nomes significativos', position: 2, slug: 'meaningful-names' },
     { title: 'Funções', position: 3, slug: 'functions' },
+    { title: 'Testes unitários', position: 4, slug: 'unit-tests' },
+    { title: 'Classes', position: 5, slug: 'classes' },
   ];
 
   const modules: CourseModuleEntity[] = [];
