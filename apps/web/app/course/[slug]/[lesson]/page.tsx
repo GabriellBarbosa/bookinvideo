@@ -11,10 +11,20 @@ import { useSubmitLessonProgress } from "./_hooks/use-lesson-progress";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { useCacheLessonCompletion } from "./_hooks/use-cache-lesson-completion";
+import { useSession } from "next-auth/react";
+import {
+  Alert,
+  AlertAction,
+  AlertDescription,
+  AlertTitle,
+} from "@/components/ui/alert";
+import { InfoIcon } from "lucide-react";
+import { LoginButton } from "@/components/LoginButton";
 
 export default function Course() {
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();
+  const { data: session } = useSession();
 
   const moduleSlug = searchParams.get("module");
   const { slug: courseSlug, lesson: lessonSlug } = useParams();
@@ -30,6 +40,10 @@ export default function Course() {
     useCourseStructure(courseSlug as string);
 
   const handleCompleteLesson = (lessonId: string) => {
+    if (!session) {
+      return;
+    }
+
     lessonProgressMutate({
       completed: true,
       lessonId,
@@ -60,6 +74,19 @@ export default function Course() {
 
           <main className="p-6">
             <section className="max-w-[1200px] space-y-4 mx-auto">
+              {!session && (
+                <Alert>
+                  <InfoIcon />
+                  <AlertTitle>Você não está logado</AlertTitle>
+                  <AlertDescription>
+                    Faça login para salvar seu progresso e gerar o certificado.
+                  </AlertDescription>
+                  <AlertAction>
+                    <LoginButton />
+                  </AlertAction>
+                </Alert>
+              )}
+
               <div className="overflow-hidden rounded-xl border bg-muted">
                 {lesson.videoId ? (
                   <YouTubePlayer
