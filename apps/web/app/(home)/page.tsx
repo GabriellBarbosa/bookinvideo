@@ -88,9 +88,6 @@ export default function Home() {
               </p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-              <button className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-amber-400 via-amber-500 to-orange-600 px-6 py-3 text-base font-semibold text-slate-950 shadow-lg shadow-amber-400/30 transition hover:scale-[1.01] hover:shadow-amber-300/40">
-                Garantir minha vaga
-              </button>
               <Link
                 href={ROUTES.course(
                   "clean-code",
@@ -98,7 +95,7 @@ export default function Home() {
                   "clean-code-introduction",
                 )}
               >
-                <button className="inline-flex items-center justify-center rounded-full border border-white/15 px-6 py-3 text-base font-semibold text-white transition hover:border-amber-400/60 hover:text-amber-100">
+                <button className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-amber-400 via-amber-500 to-orange-600 px-6 py-3 text-base font-semibold text-slate-950 shadow-lg shadow-amber-400/30 transition hover:scale-[1.01] hover:shadow-amber-300/40 w-full">
                   Ver conteúdo completo
                 </button>
               </Link>

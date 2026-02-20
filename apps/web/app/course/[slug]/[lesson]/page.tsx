@@ -18,8 +18,9 @@ import {
   AlertDescription,
   AlertTitle,
 } from "@/components/ui/alert";
-import { InfoIcon } from "lucide-react";
+import { InfoIcon, User } from "lucide-react";
 import { LoginButton } from "@/components/LoginButton";
+import { handleSignIn } from "@/utils/auth";
 
 export default function Course() {
   const queryClient = useQueryClient();
@@ -81,8 +82,13 @@ export default function Course() {
                   <AlertDescription>
                     Faça login para salvar seu progresso e gerar o certificado.
                   </AlertDescription>
-                  <AlertAction>
-                    <LoginButton />
+                  <AlertAction
+                    className="mt-4 col-start-2"
+                    onClick={handleSignIn}
+                  >
+                    <Button>
+                      <User /> Entrar com Google
+                    </Button>
                   </AlertAction>
                 </Alert>
               )}
@@ -114,12 +120,14 @@ export default function Course() {
                     {lesson.title}
                   </h1>
 
-                  <Button
-                    size="sm"
-                    onClick={() => handleCompleteLesson(lesson.id)}
-                  >
-                    concluir
-                  </Button>
+                  {session && (
+                    <Button
+                      size="sm"
+                      onClick={() => handleCompleteLesson(lesson.id)}
+                    >
+                      concluir
+                    </Button>
+                  )}
                 </div>
               </div>
             </section>
