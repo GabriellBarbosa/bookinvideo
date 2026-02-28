@@ -1,4 +1,4 @@
-import { ForbiddenException, Inject, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LessonProgressEntity } from '../entities/lesson-progress.entity';
 import { Repository } from 'typeorm';
