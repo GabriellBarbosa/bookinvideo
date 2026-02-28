@@ -8,10 +8,12 @@ import { CourseModule } from './modules/course/course.module';
 import { dataSourceOptions } from './db/datasource';
 import { APP_GUARD } from '@nestjs/core';
 import { ProxyAuthGuard } from './auth/proxy-auth.guard';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    EventEmitterModule.forRoot(),
     TypeOrmModule.forRoot(dataSourceOptions),
     UserModule,
     CourseModule,

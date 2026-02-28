@@ -6,15 +6,18 @@ import { UpsertLessonProgressUseCase } from './upsert-lesson-progress.use-case';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserEntity } from '../../user/entities/user.entity';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 describe('UpsertLessonProgressUseCase', () => {
   const userEmail = 'tests@green.com';
   const lessonId = 'lesson-1';
+  const courseId = 'course-1';
 
   let useCase: UpsertLessonProgressUseCase;
   let lessonProgressRepo: jest.Mocked<Repository<LessonProgressEntity>>;
   let lessonRepository: jest.Mocked<Repository<LessonEntity>>;
   let userRepository: jest.Mocked<Repository<UserEntity>>;
+  let courseEventEmitter: EventEmitter2;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -40,6 +43,12 @@ describe('UpsertLessonProgressUseCase', () => {
             findOne: jest.fn(),
           },
         },
+        {
+          provide: EventEmitter2,
+          useValue: {
+            emit: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -49,6 +58,7 @@ describe('UpsertLessonProgressUseCase', () => {
     lessonProgressRepo = module.get(getRepositoryToken(LessonProgressEntity));
     lessonRepository = module.get(getRepositoryToken(LessonEntity));
     userRepository = module.get(getRepositoryToken(UserEntity));
+    courseEventEmitter = module.get(EventEmitter2);
 
     userRepository.findOne.mockResolvedValue({
       uuid: 'user-uuid',
@@ -57,6 +67,9 @@ describe('UpsertLessonProgressUseCase', () => {
     lessonRepository.findOne.mockResolvedValue({
       id: lessonId,
       durationSeconds: 200,
+      course: {
+        id: courseId,
+      },
     } as LessonEntity);
   });
 
@@ -64,10 +77,7 @@ describe('UpsertLessonProgressUseCase', () => {
     userRepository.findOne.mockResolvedValue(null);
 
     await expect(
-      useCase.execute(
-        { email: userEmail },
-        { lessonId, seconds: 120 },
-      ),
+      useCase.execute({ email: userEmail }, { lessonId, seconds: 120 }),
     ).rejects.toBeInstanceOf(NotFoundException);
     expect(lessonProgressRepo.findOne).not.toHaveBeenCalled();
   });
@@ -76,10 +86,7 @@ describe('UpsertLessonProgressUseCase', () => {
     lessonRepository.findOne.mockResolvedValue(null);
 
     await expect(
-      useCase.execute(
-        { email: userEmail },
-        { lessonId, seconds: 120 },
-      ),
+      useCase.execute({ email: userEmail }, { lessonId, seconds: 120 }),
     ).rejects.toBeInstanceOf(NotFoundException);
     expect(lessonProgressRepo.findOne).not.toHaveBeenCalled();
   });
@@ -127,7 +134,9 @@ describe('UpsertLessonProgressUseCase', () => {
       completedAt: null,
     };
 
-    lessonProgressRepo.findOne.mockResolvedValue(existing as LessonProgressEntity);
+    lessonProgressRepo.findOne.mockResolvedValue(
+      existing as LessonProgressEntity,
+    );
 
     const updated = {
       ...existing,
@@ -158,7 +167,9 @@ describe('UpsertLessonProgressUseCase', () => {
       completedAt: null,
     };
 
-    lessonProgressRepo.findOne.mockResolvedValue(existing as LessonProgressEntity);
+    lessonProgressRepo.findOne.mockResolvedValue(
+      existing as LessonProgressEntity,
+    );
 
     const result = await useCase.execute(
       { email: userEmail },
@@ -183,10 +194,7 @@ describe('UpsertLessonProgressUseCase', () => {
 
     lessonProgressRepo.save.mockResolvedValue(created as LessonProgressEntity);
 
-    await useCase.execute(
-      { email: userEmail },
-      { lessonId, seconds: -10.7 },
-    );
+    await useCase.execute({ email: userEmail }, { lessonId, seconds: -10.7 });
 
     expect(lessonProgressRepo.save).toHaveBeenCalledWith({
       userId: 'user-uuid',
@@ -222,7 +230,9 @@ describe('UpsertLessonProgressUseCase', () => {
       completedAt: null,
     };
 
-    lessonProgressRepo.findOne.mockResolvedValue(existing as LessonProgressEntity);
+    lessonProgressRepo.findOne.mockResolvedValue(
+      existing as LessonProgressEntity,
+    );
 
     const updated = {
       ...existing,
@@ -254,6 +264,9 @@ describe('UpsertLessonProgressUseCase', () => {
     lessonRepository.findOne.mockResolvedValue({
       id: 'p1',
       durationSeconds: 1000,
+      course: {
+        id: courseId,
+      },
     } as LessonEntity);
     lessonProgressRepo.save.mockImplementation(
       async (data) => data as LessonProgressEntity,
@@ -287,6 +300,9 @@ describe('UpsertLessonProgressUseCase', () => {
     lessonRepository.findOne.mockResolvedValue({
       id: 'p1',
       durationSeconds: 1000,
+      course: {
+        id: courseId,
+      },
     } as LessonEntity);
     lessonProgressRepo.save.mockImplementation(
       async (data) => data as LessonProgressEntity,
@@ -312,6 +328,9 @@ describe('UpsertLessonProgressUseCase', () => {
     lessonRepository.findOne.mockResolvedValue({
       id: 'p1',
       durationSeconds: 1000,
+      course: {
+        id: courseId,
+      },
     } as LessonEntity);
     lessonProgressRepo.save.mockImplementation(
       async (data) => data as LessonProgressEntity,
@@ -344,6 +363,9 @@ describe('UpsertLessonProgressUseCase', () => {
     lessonRepository.findOne.mockResolvedValue({
       id: 'p1',
       durationSeconds: 1000,
+      course: {
+        id: courseId,
+      },
     } as LessonEntity);
     lessonProgressRepo.save.mockImplementation(
       async (data) => data as LessonProgressEntity,
@@ -361,5 +383,70 @@ describe('UpsertLessonProgressUseCase', () => {
       lastPositionSeconds: 1000,
       completedAt: expect.any(Date),
     });
+  });
+
+  it('emits generate certificate event when creating completed progress', async () => {
+    lessonProgressRepo.findOne.mockResolvedValue(null);
+    lessonRepository.findOne.mockResolvedValue({
+      id: lessonId,
+      durationSeconds: 1000,
+      course: {
+        id: courseId,
+      },
+    } as LessonEntity);
+    lessonProgressRepo.save.mockImplementation(
+      async (data) => data as LessonProgressEntity,
+    );
+
+    await useCase.execute(
+      { email: userEmail },
+      {
+        lessonId,
+        completed: true,
+        seconds: undefined,
+      },
+    );
+
+    expect(courseEventEmitter.emit).toHaveBeenCalledWith(
+      'generate-certificate',
+      {
+        userId: 'user-uuid',
+        courseId,
+      },
+    );
+  });
+
+  it('emits generate certificate event when updating completed progress', async () => {
+    lessonProgressRepo.findOne.mockResolvedValue({
+      id: 'p1',
+      userId: 'user-uuid',
+      lessonId,
+      lastPositionSeconds: 100,
+      completedAt: null,
+    } as LessonProgressEntity);
+    lessonRepository.findOne.mockResolvedValue({
+      id: lessonId,
+      durationSeconds: 1000,
+      course: {
+        id: courseId,
+      },
+    } as LessonEntity);
+    lessonProgressRepo.update.mockResolvedValue({} as UpdateResult);
+
+    await useCase.execute(
+      { email: userEmail },
+      {
+        lessonId,
+        seconds: 960,
+      },
+    );
+
+    expect(courseEventEmitter.emit).toHaveBeenCalledWith(
+      'generate-certificate',
+      {
+        userId: 'user-uuid',
+        courseId,
+      },
+    );
   });
 });

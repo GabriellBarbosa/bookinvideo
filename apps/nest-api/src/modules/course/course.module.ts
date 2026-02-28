@@ -18,6 +18,15 @@ import { UserEntity } from '../user/entities/user.entity';
     ]),
   ],
   controllers: [CourseController],
-  providers: [CourseService, UpsertLessonProgressUseCase],
+  providers: [
+    CourseService,
+    UpsertLessonProgressUseCase,
+    {
+      provide: 'COURSE_EVENT_EMITTER',
+      useValue: {
+        emit: () => undefined,
+      },
+    },
+  ],
 })
 export class CourseModule {}

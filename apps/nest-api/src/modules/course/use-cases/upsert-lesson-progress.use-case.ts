@@ -1,4 +1,4 @@
-import { ForbiddenException, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Inject, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LessonProgressEntity } from '../entities/lesson-progress.entity';
 import { Repository } from 'typeorm';
@@ -6,9 +6,11 @@ import { LessonProgressBody } from '@bookinvideo/contracts';
 import { UserEntity } from '../../user/entities/user.entity';
 import { LessonEntity } from '../entities/lesson.entity';
 import { AuthUser } from '@/auth/auth-user.type';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 export class UpsertLessonProgressUseCase {
   constructor(
+    private readonly eventEmitter: EventEmitter2,
     @InjectRepository(LessonProgressEntity)
     private readonly lessonProgressRepository: Repository<LessonProgressEntity>,
     @InjectRepository(UserEntity)
@@ -25,8 +27,9 @@ export class UpsertLessonProgressUseCase {
     if (
       (input.seconds === undefined || input.seconds === 0) &&
       !input.completed
-    )
+    ) {
       throw new Error('seconds is required unless lesson is completed');
+    }
 
     const seconds = Math.max(0, Math.floor(input.seconds || 0));
 
@@ -63,6 +66,13 @@ export class UpsertLessonProgressUseCase {
         ? (lesson.durationSeconds ?? seconds)
         : seconds;
 
+      if (shouldComplete) {
+        this.eventEmitter.emit('generate-certificate', {
+          userId: user.uuid,
+          courseId: lesson.course.id,
+        });
+      }
+
       return this.lessonProgressRepository.save({
         userId: user.uuid,
         lessonId: input.lessonId,
@@ -75,6 +85,11 @@ export class UpsertLessonProgressUseCase {
       const lastPositionSeconds =
         lesson.durationSeconds ??
         Math.max(existing.lastPositionSeconds ?? 0, seconds);
+
+      this.eventEmitter.emit('generate-certificate', {
+        userId: user.uuid,
+        courseId: lesson.course.id,
+      });
 
       return this.lessonProgressRepository.update(existing.id, {
         lastPositionSeconds,
