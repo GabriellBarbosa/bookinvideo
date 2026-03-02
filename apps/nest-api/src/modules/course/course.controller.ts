@@ -56,6 +56,21 @@ export class CourseController {
     return lesson;
   }
 
+  @Get('/progress/:slug')
+  async getCourseProgress(
+    @Param('slug') courseSlug: string,
+    @User() user: AuthUser,
+  ) {
+    if (!user?.email || !courseSlug) {
+      return 0;
+    }
+
+    return await this.courseService.getCourseProgress({
+      userEmail: user.email,
+      courseSlug: courseSlug,
+    });
+  }
+
   @Post('/lesson-progress')
   async upsertLessonProgress(
     @Body() body: LessonProgressBody,

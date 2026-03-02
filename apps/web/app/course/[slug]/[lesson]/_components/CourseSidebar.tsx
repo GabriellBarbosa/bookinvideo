@@ -1,5 +1,6 @@
 import {
   Sidebar,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -11,15 +12,17 @@ import {
 import { CourseStructure } from "@bookinvideo/contracts";
 import Link from "next/link";
 import { ROUTES } from "@/config/routes";
+import { Progress } from "@/components/ui/progress";
 
 interface Props {
   courseStructure: CourseStructure;
+  courseProgress: number;
 }
 
 type Module = CourseStructure["modules"][number];
 type Lesson = Module["lessons"][number];
 
-export function CourseSidebar({ courseStructure }: Props) {
+export function CourseSidebar({ courseStructure, courseProgress }: Props) {
   return (
     <Sidebar>
       <SidebarHeader>
@@ -34,7 +37,7 @@ export function CourseSidebar({ courseStructure }: Props) {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarGroupContent className="overflow-y-auto pb-10">
+      <SidebarGroupContent className="overflow-y-auto pb-10 flex-1">
         <SidebarMenu>
           {courseStructure.modules.map((module: Module, index: number) => (
             <SidebarGroup key={index}>
@@ -54,9 +57,15 @@ export function CourseSidebar({ courseStructure }: Props) {
                         >
                           <span>{lesson.title}</span>
                           {lesson.completed ? (
-                            <span className="w-[6px] h-[6px] rounded-full bg-destructive" aria-label="aula completa"></span>
+                            <span
+                              className="w-[6px] h-[6px] rounded-full bg-destructive"
+                              aria-label="aula completa"
+                            ></span>
                           ) : (
-                            <span className="w-[6px] h-[6px] rounded-full border" aria-label="aula não completa"></span>
+                            <span
+                              className="w-[6px] h-[6px] rounded-full border"
+                              aria-label="aula não completa"
+                            ></span>
                           )}
                         </Link>
                       </SidebarMenuButton>
@@ -68,6 +77,13 @@ export function CourseSidebar({ courseStructure }: Props) {
           ))}
         </SidebarMenu>
       </SidebarGroupContent>
+      <SidebarFooter>
+        <div className="flex justify-between">
+          <p className="text-xs">Seu progresso</p>
+          <p className="text-xs">{courseProgress} %</p>
+        </div>
+        <Progress value={courseProgress} color="red-500" />
+      </SidebarFooter>
     </Sidebar>
   );
 }

@@ -158,6 +158,48 @@ export class CourseService {
     };
   }
 
+  async getCourseProgress(payload: { userEmail: string; courseSlug: string }) {
+    const user = await this.userRepository.findOne({
+      where: { email: payload.userEmail },
+      select: ['uuid'],
+    });
+
+    if (!user) return 0;
+
+    const course = await this.courseRepository.findOne({
+      where: { slug: payload.courseSlug },
+      relations: {
+        modules: {
+          lessons: true,
+        },
+      },
+    });
+
+    if (!course) return 0;
+
+    const lessonIds = course.modules.flatMap((module) =>
+      module.lessons.map((lesson) => lesson.id).filter(Boolean),
+    );
+
+    if (lessonIds.length === 0) return 0;
+
+    const progresses = await this.lessonProgressRepository.find({
+      where: {
+        userId: user.uuid,
+        lessonId: In(lessonIds),
+      },
+      select: ['lessonId', 'completedAt'],
+    });
+
+    const completedLessonIds = new Set(
+      progresses
+        .filter((progress) => progress.completedAt)
+        .map((progress) => progress.lessonId),
+    );
+
+    return Math.round((completedLessonIds.size / lessonIds.length) * 100);
+  }
+
   @OnEvent('generate-certificate')
   async handleGenerateCertificateEvent(payload: {
     userId: string;

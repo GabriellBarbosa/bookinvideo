@@ -50,3 +50,17 @@ export async function submitLessonProgress(
 
   return res.json();
 }
+
+export async function getCourseProgress(
+  ctx: QueryFunctionContext<[string, string]>,
+) {
+  const [, courseSlug] = ctx.queryKey;
+
+  const res = await fetch(`/api/nest-proxy/course/progress/${courseSlug}`);
+
+  if (!res.ok) {
+    throw new Error("Failed to save lesson progress");
+  }
+
+  return res.json();
+}

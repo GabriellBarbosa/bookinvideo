@@ -19,41 +19,48 @@ import {
   AlertTitle,
 } from "@/components/ui/alert";
 import { InfoIcon, User } from "lucide-react";
-import { LoginButton } from "@/components/LoginButton";
 import { handleSignIn } from "@/utils/auth";
+import { useCourseProgress } from "./_hooks/use-course-progress";
 
 export default function Course() {
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();
-  const { data: session } = useSession();
-
   const moduleSlug = searchParams.get("module");
+
+  const { data: session } = useSession();
   const { slug: courseSlug, lesson: lessonSlug } = useParams();
+  const { data: courseProgress, refetch: refetchCourseProgress } =
+    useCourseProgress(courseSlug as string);
   const { data: lesson, isLoading: lessonLoading } = useLesson({
     courseSlug: courseSlug as string,
     lessonSlug: lessonSlug as string,
     moduleSlug,
   });
-
-  const { mutate: lessonProgressMutate } = useSubmitLessonProgress();
-  const { markLessonCompletedInCache } = useCacheLessonCompletion();
   const { data: courseStructure, isLoading: courseStructureLoading } =
     useCourseStructure(courseSlug as string);
+  const { mutate: lessonProgressMutate } = useSubmitLessonProgress();
+  const { markLessonCompletedInCache } = useCacheLessonCompletion();
 
-  const handleCompleteLesson = (lessonId: string) => {
+  const handleCompleteLesson = async (lessonId: string) => {
     if (!session) {
       return;
     }
 
-    lessonProgressMutate({
-      completed: true,
-      lessonId,
-    });
-
-    markLessonCompletedInCache(
-      queryClient,
-      courseSlug as string,
-      lessonSlug as string,
+    lessonProgressMutate(
+      {
+        completed: true,
+        lessonId,
+      },
+      {
+        onSuccess: () => {
+          refetchCourseProgress();
+          markLessonCompletedInCache(
+            queryClient,
+            courseSlug as string,
+            lessonSlug as string,
+          );
+        },
+      },
     );
   };
 
@@ -68,7 +75,10 @@ export default function Course() {
   return (
     <div>
       <SidebarProvider>
-        <CourseSidebar courseStructure={courseStructure} />
+        <CourseSidebar
+          courseStructure={courseStructure}
+          courseProgress={courseProgress || 0}
+        />
 
         <SidebarInset>
           <CourseHeader />

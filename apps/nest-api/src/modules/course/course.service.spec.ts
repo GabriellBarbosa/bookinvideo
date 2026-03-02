@@ -405,4 +405,87 @@ describe('CourseService', () => {
       }),
     );
   });
+
+  it('course progress: return null when user does not exist', async () => {
+    userRepo.findOne.mockResolvedValue(null);
+
+    const result = await service.getCourseProgress({
+      userEmail: 'gabriel@gmail.com',
+      courseSlug: 'course-1',
+    });
+
+    expect(result).toBe(0);
+    expect(userRepo.findOne).toHaveBeenCalled();
+    expect(courseRepo.findOne).not.toHaveBeenCalled();
+  });
+
+  it('course progress: return null when course does not exist', async () => {
+    userRepo.findOne.mockResolvedValue({
+      uuid: 'gabriel@gmail.com',
+    } as UserEntity);
+    courseRepo.findOne.mockResolvedValue(null);
+
+    const result = await service.getCourseProgress({
+      userEmail: 'gabriel@gmail.com',
+      courseSlug: 'course-1',
+    });
+
+    expect(result).toBe(0);
+    expect(courseRepo.findOne).toHaveBeenCalled();
+    expect(lessonProgressRepo.find).not.toHaveBeenCalled();
+  });
+
+  it('course progress: return 0 when course has no lessons', async () => {
+    userRepo.findOne.mockResolvedValue({
+      uuid: 'gabriel@gmail.com',
+    } as UserEntity);
+    courseRepo.findOne.mockResolvedValue({
+      id: 'course-1',
+      modules: [{ lessons: [] }],
+    } as unknown as CourseEntity);
+
+    const result = await service.getCourseProgress({
+      userEmail: 'gabriel@gmail.com',
+      courseSlug: 'course-1',
+    });
+
+    expect(result).toBe(0);
+    expect(lessonProgressRepo.find).not.toHaveBeenCalled();
+  });
+
+  it('course progress: return completion percentage from completed lessons', async () => {
+    userRepo.findOne.mockResolvedValue({
+      uuid: 'gabriel@gmail.com',
+    } as UserEntity);
+    courseRepo.findOne.mockResolvedValue({
+      id: 'course-1',
+      modules: [
+        {
+          lessons: [{ id: 'lesson-1' }, { id: 'lesson-2' }, { id: 'lesson-3' }],
+        },
+      ],
+    } as unknown as CourseEntity);
+    lessonProgressRepo.find.mockResolvedValue([
+      {
+        lessonId: 'lesson-1',
+        completedAt: new Date(),
+      },
+      {
+        lessonId: 'lesson-2',
+        completedAt: null,
+      },
+      {
+        lessonId: 'lesson-3',
+        completedAt: new Date(),
+      },
+    ] as LessonProgressEntity[]);
+
+    const result = await service.getCourseProgress({
+      userEmail: 'gabriel@gmail.com',
+      courseSlug: 'course-1',
+    });
+
+    expect(result).toBe(67);
+    expect(lessonProgressRepo.find).toHaveBeenCalled();
+  });
 });
