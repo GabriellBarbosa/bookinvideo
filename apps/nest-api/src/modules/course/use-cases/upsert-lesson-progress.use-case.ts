@@ -43,6 +43,9 @@ export class UpsertLessonProgressUseCase {
 
     const lesson = await this.lessonRepository.findOne({
       where: { id: input.lessonId },
+      relations: {
+        course: true,
+      },
     });
 
     if (!lesson) {
