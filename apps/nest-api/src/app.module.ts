@@ -9,6 +9,7 @@ import { dataSourceOptions } from './db/datasource';
 import { APP_GUARD } from '@nestjs/core';
 import { ProxyAuthGuard } from './auth/proxy-auth.guard';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { CertificateModule } from './modules/certificate/certificate.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     TypeOrmModule.forRoot(dataSourceOptions),
     UserModule,
     CourseModule,
+    CertificateModule,
   ],
   controllers: [AppController],
   providers: [

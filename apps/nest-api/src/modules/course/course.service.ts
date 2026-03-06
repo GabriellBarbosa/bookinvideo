@@ -12,9 +12,7 @@ import { LessonProgressEntity } from './entities/lesson-progress.entity';
 import { UserEntity } from '../user/entities/user.entity';
 import { AuthUser } from '@/auth/auth-user.type';
 import { In } from 'typeorm';
-import { OnEvent } from '@nestjs/event-emitter';
 import { CertificateEntity } from './entities/certificate.entity';
-import { customAlphabet } from 'nanoid';
 
 @Injectable()
 export class CourseService {
@@ -27,8 +25,6 @@ export class CourseService {
     private readonly lessonProgressRepository: Repository<LessonProgressEntity>,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
-    @InjectRepository(CertificateEntity)
-    private readonly certificateRepository: Repository<CertificateEntity>,
   ) {}
 
   async getCourseStructure(slug: string, authUser?: AuthUser) {
@@ -198,72 +194,5 @@ export class CourseService {
     );
 
     return Math.round((completedLessonIds.size / lessonIds.length) * 100);
-  }
-
-  @OnEvent('generate-certificate')
-  async handleGenerateCertificateEvent(payload: {
-    userId: string;
-    courseId: string;
-  }) {
-    const user = await this.userRepository.findOne({
-      where: { uuid: payload.userId },
-    });
-
-    if (!user) return;
-
-    const course = await this.courseRepository.findOne({
-      where: { id: payload.courseId },
-      relations: {
-        modules: {
-          lessons: true,
-        },
-      },
-    });
-
-    if (!course) return;
-
-    const lessonIds = course.modules.flatMap((module) =>
-      module.lessons.map((lesson) => lesson.id).filter(Boolean),
-    );
-
-    if (lessonIds.length === 0) return;
-
-    const progresses = await this.lessonProgressRepository.find({
-      where: {
-        userId: user.uuid,
-        lessonId: In(lessonIds),
-      },
-      select: ['lessonId', 'completedAt'],
-    });
-
-    const completedLessonIds = new Set(
-      progresses
-        .filter((progress) => progress.completedAt)
-        .map((progress) => progress.lessonId),
-    );
-
-    const allLessonsCompleted = lessonIds.every((id) =>
-      completedLessonIds.has(id),
-    );
-
-    if (!allLessonsCompleted) return;
-
-    const now = new Date();
-
-    const nanoId = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyz', 16);
-
-    await this.certificateRepository.save({
-      publicId: nanoId(),
-      userId: user.uuid,
-      courseId: course.id,
-      recipientName: user.name,
-      courseTitle: course.title,
-      workloadHours: course.estimatedHours ?? 0,
-      completedAt: now,
-      issuedAt: now,
-      revoked: false,
-      revokedAt: null,
-      revokeReason: null,
-    });
   }
 }

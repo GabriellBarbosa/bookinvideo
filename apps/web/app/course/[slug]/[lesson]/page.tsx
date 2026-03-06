@@ -21,6 +21,8 @@ import {
 import { InfoIcon, User } from "lucide-react";
 import { handleSignIn } from "@/utils/auth";
 import { useCourseProgress } from "./_hooks/use-course-progress";
+import { toast } from "sonner";
+import { useEffect } from "react";
 
 export default function Course() {
   const queryClient = useQueryClient();
@@ -40,6 +42,30 @@ export default function Course() {
     useCourseStructure(courseSlug as string);
   const { mutate: lessonProgressMutate } = useSubmitLessonProgress();
   const { markLessonCompletedInCache } = useCacheLessonCompletion();
+
+  useEffect(() => {
+    const eventSource = new EventSource(`/api/certificate-sse/${courseSlug}`);
+
+    eventSource.addEventListener("certificate_ready", () => {
+      toast.success("Seu certificado está pronto!", {
+        duration: 5000,
+      });
+    });
+
+    eventSource.addEventListener("certificate_error", () => {
+      toast.error("Erro ao gerar o certificado", {
+        duration: 5000,
+      });
+    });
+
+    eventSource.onerror = (error) => {
+      console.error("SSE connection error", error);
+    };
+
+    return () => {
+      eventSource.close();
+    };
+  }, [courseSlug, toast]);
 
   const handleCompleteLesson = async (lessonId: string) => {
     if (!session) {
