@@ -22,8 +22,11 @@ export async function GET(request: Request, context: RouteContext) {
   if (session?.user?.email) {
     headers.set("x-user-email", session.user.email);
   }
-
-  console.log("API URL: ", `${API_URL}/certificate/stream/${courseSlug}`);
+  if (!session?.user?.email) {
+    return new Response("User is not allowed to connect to SSE upstream", {
+      status: 403,
+    });
+  }
 
   const upstream = await fetch(`${API_URL}/certificate/stream/${courseSlug}`, {
     headers,

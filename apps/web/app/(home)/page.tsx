@@ -6,6 +6,7 @@ import {
   CheckCircle2,
   Clock3,
   LayoutDashboard,
+  LockOpen,
   MessageSquare,
   ShieldCheck,
   Sparkles,
@@ -63,31 +64,41 @@ const modules = [
 ];
 
 const bonuses = [
-  "Guia de revisão rápido para o time",
-  "Templates de PR e de documentação de decisão",
-  "Sessão ao vivo para dúvidas e revisão de código",
+  "Aplicável em back e front",
+  "Aulas curtas de 15-20 min",
+  "Comunidade aberta",
 ];
 
 export default function Home() {
   return (
-    <div className="min-h-screen">
+    <div className="relative min-h-screen overflow-hidden">
       <Header />
 
-      <main className="relative mx-auto flex max-w-6xl flex-col gap-16 px-6 py-12 sm:py-20">
-        <section className="grid gap-12 lg:grid-cols-[1.05fr_0.95fr]">
-          <div className="space-y-8">
-            <div className="space-y-4">
-              <h1 className="text-4xl font-semibold leading-tight sm:text-5xl">
-                Transforme código confuso em sistemas claros, seguros e fáceis
-                de evoluir.
-              </h1>
-              <p className="text-lg text-slate-200/80 sm:text-xl">
-                Um curso direto ao ponto para elevar a qualidade do seu código,
-                acelerar code reviews e reduzir retrabalho. Nada de teoria
-                solta: apenas práticas aplicáveis no dia seguinte.
-              </p>
-            </div>
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+      <main className="relative z-10 space-y-16 pb-14">
+        <section className="relative max-w-6xl mx-auto px-6 pt-10">
+          <div className="grid items-start gap-10 lg:grid-cols-[1.1fr_0.9fr]">
+            <div className="relative space-y-7">
+              <div className="max-w-2xl space-y-4">
+                <h1 className="text-4xl font-semibold leading-tight sm:text-5xl">
+                  Transforme código confuso em sistemas claros, seguros e fáceis
+                  de evoluir.
+                </h1>
+                <p className="text-lg text-slate-200/80 sm:text-xl">
+                  Um curso direto ao ponto para elevar a qualidade do seu
+                  código, acelerar code reviews e reduzir retrabalho. Nada de
+                  teoria solta: apenas práticas aplicáveis no dia seguinte.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-3 text-sm">
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-3 py-2 text-white/85">
+                  <Clock3 className="h-4 w-4 text-amber-300" />
+                  Aulas rápidas
+                </span>
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-3 py-2 text-white/85">
+                  <LockOpen className="h-4 w-4 text-amber-300" />
+                  Acesso imediato
+                </span>
+              </div>
               <Link
                 href={ROUTES.course(
                   "clean-code",
@@ -95,36 +106,32 @@ export default function Home() {
                   "clean-code-introduction",
                 )}
               >
-                <button className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-amber-400 via-amber-500 to-orange-600 px-6 py-3 text-base font-semibold text-slate-950 shadow-lg shadow-amber-400/30 transition hover:scale-[1.01] hover:shadow-amber-300/40 w-full">
+                <button className="rounded-full bg-gradient-to-r from-amber-300 via-amber-400 to-orange-500 px-7 py-3 text-base font-semibold text-slate-950 shadow-lg shadow-amber-500/30 transition hover:scale-[1.01] hover:shadow-amber-300/40">
                   Ver conteúdo completo
                 </button>
               </Link>
             </div>
-          </div>
-
-          <div className="relative">
-            <div className="grid gap-4 rounded-2xl border border-white/5 bg-white/5 p-4 backdrop-blur ">
-              {highlights.map((item) => (
-                <div
-                  key={item.title}
-                  className="flex items-start gap-3 rounded-xl p-2"
-                >
-                  <div className="mt-0.5 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-amber-200">
-                    <item.icon className="h-5 w-5" />
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-base font-semibold text-white">
-                      {item.title}
+            <div className="relative grid gap-6 sm:grid-cols-3 lg:grid-cols-1 rounded-2xl bg-white/5 p-6">
+              {highlights.map((highlight) => (
+                <div key={highlight.title}>
+                  <div className="flex items-center gap-3">
+                    <div className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-amber-300/20">
+                      <highlight.icon className="h-4 w-4 text-amber-200" />
+                    </div>
+                    <p className="text-sm font-semibold text-white">
+                      {highlight.title}
                     </p>
-                    <p className="text-sm text-white/70">{item.description}</p>
                   </div>
+                  <p className="mt-1 text-sm text-white/70">
+                    {highlight.description}
+                  </p>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        <section className="space-y-6 rounded-3xl border border-white/10 bg-white/5 px-6 py-8 backdrop-blur lg:px-10 lg:py-10">
+        <section className="relative max-w-6xl mx-auto px-6 space-y-6 rounded-3xl border border-white/10 bg-white/5 py-8 backdrop-blur lg:px-10 lg:py-10">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-sm uppercase tracking-[0.2em] text-amber-200/70">
@@ -139,7 +146,7 @@ export default function Home() {
             {modules.map((module) => (
               <div
                 key={module.title}
-                className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-black/30 p-6"
+                className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-black/30 p-6 transition hover:-translate-y-0.5 hover:border-amber-200/30 hover:bg-black/40"
               >
                 <div className="flex items-center gap-3">
                   <BookOpen className="h-5 w-5 text-amber-300" />
@@ -160,25 +167,27 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="space-y-6">
+        <section className="relative max-w-6xl mx-auto px-6 w-full space-y-6">
           <h2 className="text-3xl font-semibold text-white sm:text-4xl">
             Uma breve introdução.
           </h2>
-          <div className="relative aspect-video">
-            <iframe
-              className="absolute inset-0 w-full h-full"
-              width="560"
-              height="315"
-              src="https://www.youtube.com/embed/e2x4jSgm6xw?si=zS_IQR6bQNV0_K59"
-              title="YouTube video player"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              referrerPolicy="strict-origin-when-cross-origin"
-              allowFullScreen
-            ></iframe>
+          <div className="overflow-hidden rounded-3xl border border-white/10 bg-black/30 p-2 shadow-xl shadow-black/30">
+            <div className="relative aspect-video overflow-hidden rounded-2xl">
+              <iframe
+                className="absolute inset-0 w-full h-full"
+                width="560"
+                height="315"
+                src="https://www.youtube.com/embed/e2x4jSgm6xw?si=zS_IQR6bQNV0_K59"
+                title="YouTube video player"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
+              ></iframe>
+            </div>
           </div>
         </section>
 
-        <section className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+        <section className="relative max-w-6xl mx-auto px-6 grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="space-y-6 rounded-3xl border border-white/10 bg-white/5 px-6 py-8 shadow-xl shadow-amber-400/10 backdrop-blur">
             <p className="text-sm uppercase tracking-[0.2em] text-amber-200/70">
               Por que agora
@@ -208,65 +217,57 @@ export default function Home() {
                   Material vivo
                 </div>
                 <p className="mt-2 text-sm text-white/70">
-                  Atualizações e novos casos enviados para os alunos sem custo
-                  extra.
+                  Atualizações e novos casos enviados para os alunos sem custo.
                 </p>
-              </div>
-            </div>
-            <div className="flex flex-wrap items-center gap-3 text-sm text-white/70">
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/30 px-3 py-2">
-                <Clock3 className="h-4 w-4" />
-                Aulas curtas de 15-20 min
-              </div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/30 px-3 py-2">
-                <MessageSquare className="h-4 w-4" />
-                Comunidade fechada
-              </div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/30 px-3 py-2">
-                <ShieldCheck className="h-4 w-4" />
-                Garantia de 7 dias
               </div>
             </div>
           </div>
 
           <div className="space-y-4 rounded-3xl border border-white/10 bg-gradient-to-b from-black/60 to-black/20 p-6 shadow-2xl shadow-amber-400/10 backdrop-blur">
-            <p className="text-sm uppercase tracking-[0.2em] text-amber-200/70">
-              Bônus da turma
-            </p>
-            <div className="flex items-baseline gap-2 text-4xl font-semibold text-white">
-              R$ 497{" "}
-              <span className="text-base font-medium text-white/60">
-                ou 12x R$ 49
-              </span>
-            </div>
-            <p className="text-sm text-white/60">
-              Valor promocional para as primeiras vagas.
-            </p>
-            <div className="space-y-3 rounded-2xl border border-white/10 bg-black/40 p-4">
-              {bonuses.map((bonus) => (
-                <div key={bonus} className="flex items-start gap-3 text-sm">
-                  <span className="mt-1 h-2.5 w-2.5 rounded-full bg-amber-300" />
-                  <p className="text-white/80">{bonus}</p>
+            <div className="space-y-4">
+              <div className="flex items-baseline gap-2 text-4xl font-semibold text-white">
+                Acesso gratuito
+              </div>
+
+              <div className="space-y-3">
+                {bonuses.map((bonus) => (
+                  <div key={bonus} className="flex items-start gap-3 text-sm">
+                    <span className="mt-1 h-2.5 w-2.5 rounded-full bg-amber-300" />
+                    <p className="text-white/80">{bonus}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-white/10 p-4 text-sm text-white">
+                “Depois de seguir o método, nossas PRs ficaram menores e as
+                discussões muito mais objetivas.”
+                <div className="mt-2 text-xs text-white/70">
+                  — Renan Victor, engenheiro de software
                 </div>
-              ))}
-            </div>
-            <div className="rounded-2xl border border-white/10 bg-white/10 p-4 text-sm text-white">
-              “Depois de seguir o método, nossas PRs ficaram menores e as
-              discussões muito mais objetivas.”
-              <div className="mt-2 text-xs text-white/70">
-                — Renan Victor, engenheiro de software
               </div>
             </div>
-            <button className="mt-2 inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-amber-400 via-amber-500 to-orange-600 px-6 py-3 text-base font-semibold text-slate-950 shadow-lg shadow-amber-400/30 transition hover:scale-[1.01] hover:shadow-amber-300/40">
-              Entrar para a turma
-            </button>
-            <p className="text-center text-xs text-white/60">
-              Acesso imediato ao material gravado.
-            </p>
+
+            <div className="space-y-4">
+              <Link
+                className="block"
+                href={ROUTES.course(
+                  "clean-code",
+                  "intro",
+                  "clean-code-introduction",
+                )}
+              >
+                <button className="mt-2 inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-amber-400 via-amber-500 to-orange-600 px-6 py-3 text-base font-semibold text-slate-950 shadow-lg shadow-amber-400/30 transition hover:scale-[1.01] hover:shadow-amber-300/40">
+                  Acessar curso
+                </button>
+              </Link>
+
+              <p className="text-center text-xs text-white/60">
+                Acesso imediato ao material gravado.
+              </p>
+            </div>
           </div>
         </section>
 
-        <section className="space-y-6 rounded-3xl border border-white/10 bg-white/5 px-6 py-10 text-white backdrop-blur">
+        <section className="max-w-6xl mx-auto px-6 space-y-6 rounded-3xl border border-white/10 bg-white/5 py-10 text-white backdrop-blur">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-sm uppercase tracking-[0.2em] text-amber-200/70">
@@ -307,7 +308,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-r from-amber-400/20 via-orange-500/15 to-amber-600/20 px-6 py-10 text-white shadow-2xl shadow-amber-400/10">
+        <section className="max-w-6xl mx-auto px-6 relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-r from-amber-400/20 via-orange-500/15 to-amber-600/20 px-6 py-10 text-white shadow-2xl shadow-amber-400/10">
           <div className="absolute right-0 top-0 h-64 w-64 -translate-y-1/3 translate-x-1/4 rounded-full bg-white/10 blur-3xl" />
           <div className="grid items-center gap-8 lg:grid-cols-[1.1fr_0.9fr]">
             <div className="space-y-4">
@@ -348,7 +349,8 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="space-y-6 text-center text-white">
+        <section className="relative max-w-6xl mx-auto px-6 space-y-6 overflow-hidden text-center">
+
           <p className="text-sm uppercase tracking-[0.2em] text-amber-200/70">
             Pronto para começar?
           </p>
@@ -356,12 +358,17 @@ export default function Home() {
             Vamos deixar seu código mais limpo, previsível e fácil de evoluir.
           </h3>
           <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <button className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-amber-400 via-amber-500 to-orange-600 px-7 py-3 text-base font-semibold text-slate-950 shadow-lg shadow-amber-400/30 transition hover:scale-[1.01] hover:shadow-amber-300/40">
-              Quero entrar agora
-            </button>
-            <button className="inline-flex items-center justify-center rounded-full border border-white/15 px-7 py-3 text-base font-semibold text-white transition hover:border-amber-400/60 hover:text-amber-100">
-              Falar com o instrutor
-            </button>
+            <Link
+              href={ROUTES.course(
+                "clean-code",
+                "intro",
+                "clean-code-introduction",
+              )}
+            >
+              <button className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-amber-400 via-amber-500 to-orange-600 px-7 py-3 text-base font-semibold text-slate-950 shadow-lg shadow-amber-400/30 transition hover:scale-[1.01] hover:shadow-amber-300/40">
+                Quero entrar agora
+              </button>
+            </Link>
           </div>
         </section>
       </main>

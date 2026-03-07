@@ -52,16 +52,6 @@ export default function Course() {
       });
     });
 
-    eventSource.addEventListener("certificate_error", () => {
-      toast.error("Erro ao gerar o certificado", {
-        duration: 5000,
-      });
-    });
-
-    eventSource.onerror = (error) => {
-      console.error("SSE connection error", error);
-    };
-
     return () => {
       eventSource.close();
     };
