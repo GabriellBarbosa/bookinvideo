@@ -113,18 +113,21 @@ export default function Home() {
             </div>
             <div className="relative grid gap-6 sm:grid-cols-3 lg:grid-cols-1 rounded-2xl bg-white/5 p-6">
               {highlights.map((highlight) => (
-                <div key={highlight.title}>
-                  <div className="flex items-center gap-3">
-                    <div className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-amber-300/20">
-                      <highlight.icon className="h-4 w-4 text-amber-200" />
-                    </div>
+                <div
+                  className="grid grid-cols-[auto_1fr] gap-x-2"
+                  key={highlight.title}
+                >
+                  <div className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-amber-300/20">
+                    <highlight.icon className="h-4 w-4 text-amber-200" />
+                  </div>
+                  <div>
                     <p className="text-sm font-semibold text-white">
                       {highlight.title}
                     </p>
+                    <p className="mt-1 text-sm text-white/70">
+                      {highlight.description}
+                    </p>
                   </div>
-                  <p className="mt-1 text-sm text-white/70">
-                    {highlight.description}
-                  </p>
                 </div>
               ))}
             </div>
@@ -350,7 +353,6 @@ export default function Home() {
         </section>
 
         <section className="relative max-w-6xl mx-auto px-6 space-y-6 overflow-hidden text-center">
-
           <p className="text-sm uppercase tracking-[0.2em] text-amber-200/70">
             Pronto para começar?
           </p>
