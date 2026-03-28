@@ -4,10 +4,10 @@ import { customAlphabet } from 'nanoid';
 import { Observable, Subject } from 'rxjs';
 import { In, Repository } from 'typeorm';
 import { UserEntity } from '../user/entities/user.entity';
-import { CertificateEntity } from '../course/entities/certificate.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CourseEntity } from '../course/entities/course.entity';
 import { LessonProgressEntity } from '../course/entities/lesson-progress.entity';
+import { CertificateEntity } from './entitites/certificate.entity';
 
 type CertEvent = { type: string; data: { message: string } };
 
@@ -43,6 +43,19 @@ export class CertificateService {
   private emit(key: string, event: CertEvent) {
     const subject = this.channels.get(key);
     subject?.next(event);
+  }
+
+  async getCertificateByPublicId(publicId: string) {
+    return this.certificateRepository.findOne({
+      where: { publicId },
+      select: {
+        publicId: true,
+        recipientName: true,
+        courseTitle: true,
+        workloadHours: true,
+        completedAt: true,
+      },
+    });
   }
 
   @OnEvent('generate-certificate')

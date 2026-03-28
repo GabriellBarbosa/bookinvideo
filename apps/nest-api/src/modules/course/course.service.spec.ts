@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 import { LessonEntity } from './entities/lesson.entity';
 import { LessonProgressEntity } from './entities/lesson-progress.entity';
 import { UserEntity } from '../user/entities/user.entity';
-import { CertificateEntity } from './entities/certificate.entity';
+import { CertificateEntity } from '../certificate/entitites/certificate.entity';
 
 describe('CourseService', () => {
   let service: CourseService;

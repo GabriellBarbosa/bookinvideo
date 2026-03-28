@@ -7,7 +7,7 @@ import { LessonEntity } from './entities/lesson.entity';
 import { LessonProgressEntity } from './entities/lesson-progress.entity';
 import { UpsertLessonProgressUseCase } from './use-cases/upsert-lesson-progress.use-case';
 import { UserEntity } from '../user/entities/user.entity';
-import { CertificateEntity } from './entities/certificate.entity';
+import { CertificateEntity } from '../certificate/entitites/certificate.entity';
 
 @Module({
   imports: [

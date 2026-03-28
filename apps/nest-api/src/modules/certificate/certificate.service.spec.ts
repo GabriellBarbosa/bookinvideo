@@ -5,8 +5,8 @@ import { UserEntity } from '../user/entities/user.entity';
 import { CourseEntity } from '../course/entities/course.entity';
 import { LessonEntity } from '../course/entities/lesson.entity';
 import { LessonProgressEntity } from '../course/entities/lesson-progress.entity';
-import { CertificateEntity } from '../course/entities/certificate.entity';
 import { CertificateService } from './certificate.service';
+import { CertificateEntity } from './entitites/certificate.entity';
 
 describe('CertificateService', () => {
   let service: CertificateService;
@@ -47,6 +47,7 @@ describe('CertificateService', () => {
           provide: getRepositoryToken(CertificateEntity),
           useValue: {
             save: jest.fn(),
+            findOne: jest.fn(),
           },
         },
       ],
@@ -160,5 +161,37 @@ describe('CertificateService', () => {
         workloadHours: 10,
       }),
     );
+  });
+
+  it('get certificate by public id: return only necessary fields', async () => {
+    const completedAt = new Date('2026-01-01T00:00:00.000Z');
+
+    certificateRepo.findOne.mockResolvedValue({
+      publicId: 'public-id-1',
+      recipientName: 'John Doe',
+      courseTitle: 'Clean Code',
+      workloadHours: 10,
+      completedAt,
+    } as CertificateEntity);
+
+    const result = await service.getCertificateByPublicId('public-id-1');
+
+    expect(certificateRepo.findOne).toHaveBeenCalledWith({
+      where: { publicId: 'public-id-1' },
+      select: {
+        publicId: true,
+        recipientName: true,
+        courseTitle: true,
+        workloadHours: true,
+        completedAt: true,
+      },
+    });
+    expect(result).toEqual({
+      publicId: 'public-id-1',
+      recipientName: 'John Doe',
+      courseTitle: 'Clean Code',
+      workloadHours: 10,
+      completedAt,
+    });
   });
 });

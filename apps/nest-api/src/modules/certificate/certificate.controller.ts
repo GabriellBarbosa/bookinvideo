@@ -1,4 +1,4 @@
-import { Controller, Param, Sse } from '@nestjs/common';
+import { Controller, Get, Param, Sse } from '@nestjs/common';
 import { CertificateService } from './certificate.service';
 import { map } from 'rxjs';
 import { User } from '@/auth/user.decorator';
@@ -22,5 +22,10 @@ export class CertificateController {
         data: evt.data,
       })),
     );
+  }
+
+  @Get(':id')
+  async getCertificate(@Param('id') id: string) {
+    return await this.certificateService.getCertificateByPublicId(id);
   }
 }

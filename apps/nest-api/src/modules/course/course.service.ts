@@ -12,7 +12,6 @@ import { LessonProgressEntity } from './entities/lesson-progress.entity';
 import { UserEntity } from '../user/entities/user.entity';
 import { AuthUser } from '@/auth/auth-user.type';
 import { In } from 'typeorm';
-import { CertificateEntity } from './entities/certificate.entity';
 
 @Injectable()
 export class CourseService {

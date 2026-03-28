@@ -1,3 +1,4 @@
+import { CourseEntity } from '../../course/entities/course.entity';
 import { UserEntity } from '../../user/entities/user.entity';
 import {
   Entity,
@@ -9,7 +10,6 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { CourseEntity } from './course.entity';
 
 @Entity({ name: 'certificates' })
 @Index('certificates_public_id_unique', ['publicId'], { unique: true })
