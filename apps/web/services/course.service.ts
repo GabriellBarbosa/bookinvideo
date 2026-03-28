@@ -27,7 +27,7 @@ export async function fetchLesson(
   const { courseSlug, lessonSlug, moduleSlug } = body;
 
   const res = await fetch(
-    `${API_URL}/course/lesson?courseSlug=${courseSlug}&moduleSlug=${moduleSlug}&lessonSlug=${lessonSlug}`,
+    `/api/nest-proxy/course/lesson?courseSlug=${courseSlug}&moduleSlug=${moduleSlug}&lessonSlug=${lessonSlug}`,
   );
 
   return res.json();

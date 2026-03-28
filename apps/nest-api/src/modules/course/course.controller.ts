@@ -42,11 +42,13 @@ export class CourseController {
     @Query('courseSlug') courseSlug: string,
     @Query('moduleSlug') moduleSlug: string,
     @Query('lessonSlug') lessonSlug: string,
+    @User() user: AuthUser,
   ) {
     const lesson = await this.courseService.getLesson({
       courseSlug,
       lessonSlug,
       moduleSlug,
+      authUser: user,
     });
 
     if (!lesson) {

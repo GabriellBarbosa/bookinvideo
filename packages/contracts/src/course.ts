@@ -1,5 +1,11 @@
 import { z } from "zod";
 
+const LessonNavigationSchema = z.object({
+  lessonSlug: z.string().min(1),
+  moduleSlug: z.string().min(1),
+  courseSlug: z.string().min(1),
+});
+
 export const LessonSchema = z.object({
   id: z.uuid(),
   videoId: z.string().min(1),
@@ -9,7 +15,9 @@ export const LessonSchema = z.object({
   durationSeconds: z.number().nullable(),
   position: z.number().int().positive(),
   isFree: z.boolean(),
-  completed: z.boolean().optional()
+  completed: z.boolean().optional(),
+  prev: LessonNavigationSchema.nullable().optional(),
+  next: LessonNavigationSchema.nullable().optional(),
 });
 export type Lesson = z.infer<typeof LessonSchema>;
 

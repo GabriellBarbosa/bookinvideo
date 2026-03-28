@@ -124,8 +124,6 @@ export class CertificateService {
       revokeReason: null,
     });
 
-    console.log('Certificado GERADO 1');
-
     this.emit(this.getStreamKey(user.email, course.slug), {
       type: 'certificate_ready',
       data: {

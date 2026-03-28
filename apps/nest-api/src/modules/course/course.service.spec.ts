@@ -204,6 +204,35 @@ describe('CourseService', () => {
       createdAt: '2026-01-09T00:08:49.064Z',
       updatedAt: '2026-01-09T00:08:49.064Z',
     } as unknown as LessonEntity);
+    courseRepo.findOne.mockResolvedValue({
+      slug: 'clean-code',
+      modules: [
+        {
+          slug: 'intro',
+          position: 1,
+          lessons: [
+            {
+              slug: 'what-is-clean-code',
+              position: 1,
+            },
+            {
+              slug: 'clean-code-introduction',
+              position: 2,
+            },
+          ],
+        },
+        {
+          slug: 'solid',
+          position: 2,
+          lessons: [
+            {
+              slug: 'solid-principles',
+              position: 1,
+            },
+          ],
+        },
+      ],
+    } as unknown as CourseEntity);
 
     const result = await service.getLesson({
       courseSlug: 'clean-code',
@@ -221,6 +250,16 @@ describe('CourseService', () => {
       durationSeconds: 943,
       position: 1,
       isFree: true,
+      prev: {
+        lessonSlug: 'what-is-clean-code',
+        moduleSlug: 'intro',
+        courseSlug: 'clean-code',
+      },
+      next: {
+        lessonSlug: 'solid-principles',
+        moduleSlug: 'solid',
+        courseSlug: 'clean-code',
+      },
     });
   });
 
@@ -382,5 +421,78 @@ describe('CourseService', () => {
 
     expect(result).toBe(67);
     expect(lessonProgressRepo.find).toHaveBeenCalled();
+  });
+
+  it('getLesson: fill completed field when user is authenticated', async () => {
+    lessonRepo.findOne.mockResolvedValue({
+      id: 'lesson-1',
+      title: 'Introdução Código Limpo',
+      slug: 'clean-code-introduction',
+      videoId: '87e',
+      videoUrl: 'https://youtu.be/nbcfy6_v86A?si=HmTKO2b-uBpMEeUF',
+      durationSeconds: 943,
+      position: 1,
+      isFree: true,
+    } as LessonEntity);
+    courseRepo.findOne.mockResolvedValue({
+      title: 'Código Limpo na Prática',
+      slug: 'clean-code',
+      modules: [
+        {
+          title: 'Introdução',
+          position: 1,
+          slug: 'intro',
+          lessons: [
+            {
+              id: 'lesson-1',
+              slug: 'clean-code-introduction',
+              position: 1,
+            },
+            {
+              id: 'lesson-2',
+              slug: 'solid-principles',
+              position: 2,
+            },
+          ],
+        },
+      ],
+    } as unknown as CourseEntity);
+    userRepo.findOne.mockResolvedValue({
+      uuid: 'user-1',
+      email: 'john@doe.com',
+    } as UserEntity);
+    lessonProgressRepo.find.mockResolvedValue([
+      {
+        lessonId: 'lesson-1',
+        completedAt: new Date(),
+      },
+    ] as LessonProgressEntity[]);
+
+    const result = await service.getLesson({
+      courseSlug: 'clean-code',
+      lessonSlug: 'clean-code-introduction',
+      moduleSlug: 'intro',
+      authUser: {
+        email: 'john@doe.com',
+      },
+    });
+
+    expect(result).toEqual({
+      id: 'lesson-1',
+      title: 'Introdução Código Limpo',
+      slug: 'clean-code-introduction',
+      videoId: '87e',
+      videoUrl: 'https://youtu.be/nbcfy6_v86A?si=HmTKO2b-uBpMEeUF',
+      durationSeconds: 943,
+      position: 1,
+      isFree: true,
+      completed: true,
+      prev: null,
+      next: {
+        lessonSlug: 'solid-principles',
+        moduleSlug: 'intro',
+        courseSlug: 'clean-code',
+      },
+    });
   });
 });

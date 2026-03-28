@@ -124,7 +124,8 @@ export class CourseService {
     courseSlug,
     moduleSlug,
     lessonSlug,
-  }: LessonBody): Promise<LessonType | null> {
+    authUser,
+  }: LessonBody & { authUser?: AuthUser }): Promise<LessonType | null> {
     const lesson = await this.lessonRepository.findOne({
       where: {
         slug: lessonSlug,
@@ -141,6 +142,42 @@ export class CourseService {
       return null;
     }
 
+    const course = await this.courseRepository.findOne({
+      where: { slug: courseSlug },
+      relations: {
+        modules: {
+          lessons: true,
+        },
+      },
+      order: {
+        modules: {
+          position: 'ASC',
+          lessons: {
+            position: 'ASC',
+          },
+        },
+      },
+    });
+
+    const orderedLessons =
+      course?.modules.flatMap((module) =>
+        module.lessons.map((moduleLesson) => ({
+          lessonSlug: moduleLesson.slug,
+          moduleSlug: module.slug,
+          courseSlug,
+        })),
+      ) ?? [];
+
+    const currentLessonIndex = orderedLessons.findIndex(
+      (moduleLesson) =>
+        moduleLesson.lessonSlug === lessonSlug &&
+        moduleLesson.moduleSlug === moduleSlug,
+    );
+
+    const completedLessons = course
+      ? await this.findCompletedLessons(course, authUser)
+      : undefined;
+
     return {
       id: lesson.id,
       videoId: lesson.videoId,
@@ -150,6 +187,14 @@ export class CourseService {
       durationSeconds: lesson.durationSeconds,
       position: lesson.position,
       isFree: lesson.isFree,
+      prev:
+        currentLessonIndex > 0 ? orderedLessons[currentLessonIndex - 1] : null,
+      next:
+        currentLessonIndex >= 0 &&
+        currentLessonIndex < orderedLessons.length - 1
+          ? orderedLessons[currentLessonIndex + 1]
+          : null,
+      ...(completedLessons && { completed: completedLessons.has(lesson.id) }),
     };
   }
 

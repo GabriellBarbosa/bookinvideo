@@ -18,11 +18,19 @@ import {
   AlertDescription,
   AlertTitle,
 } from "@/components/ui/alert";
-import { InfoIcon, User } from "lucide-react";
+import {
+  ArrowLeft,
+  ChevronLeft,
+  ChevronRight,
+  InfoIcon,
+  User,
+} from "lucide-react";
 import { handleSignIn } from "@/utils/auth";
 import { useCourseProgress } from "./_hooks/use-course-progress";
 import { toast } from "sonner";
 import { useEffect } from "react";
+import Link from "next/link";
+import { ROUTES } from "@/config/routes";
 
 export default function Course() {
   const queryClient = useQueryClient();
@@ -33,7 +41,11 @@ export default function Course() {
   const { slug: courseSlug, lesson: lessonSlug } = useParams();
   const { data: courseProgress, refetch: refetchCourseProgress } =
     useCourseProgress(courseSlug as string);
-  const { data: lesson, isLoading: lessonLoading } = useLesson({
+  const {
+    data: lesson,
+    isLoading: lessonLoading,
+    refetch: refetchLesson,
+  } = useLesson({
     courseSlug: courseSlug as string,
     lessonSlug: lessonSlug as string,
     moduleSlug,
@@ -70,11 +82,17 @@ export default function Course() {
       {
         onSuccess: () => {
           refetchCourseProgress();
+          refetchLesson();
           markLessonCompletedInCache(
             queryClient,
             courseSlug as string,
             lessonSlug as string,
           );
+
+          toast.success("Aula completa com sucesso!", {
+            duration: 5000,
+            position: "top-right",
+          });
         },
       },
     );
@@ -140,19 +158,54 @@ export default function Course() {
                 )}
               </div>
 
-              <div className="space-y-2">
-                <div className="flex items-center justify-between gap-4">
-                  <h1 className="text-2xl font-semibold leading-tight">
-                    {lesson.title}
-                  </h1>
-
-                  {session && (
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  {lesson.prev && (
+                    <Link
+                      href={ROUTES.course(
+                        lesson.prev.courseSlug,
+                        lesson.prev.moduleSlug,
+                        lesson.prev.lessonSlug,
+                      )}
+                    >
+                      <Button
+                        variant={"outline"}
+                        className="flex items-center gap-2"
+                      >
+                        <ChevronLeft />
+                        anterior
+                      </Button>
+                    </Link>
+                  )}
+                </div>
+                <div>
+                  {session && !lesson.completed && (
                     <Button
                       size="sm"
+                      variant={"outline"}
                       onClick={() => handleCompleteLesson(lesson.id)}
                     >
-                      concluir
+                      completar
                     </Button>
+                  )}
+                </div>
+                <div>
+                  {lesson.next && (
+                    <Link
+                      href={ROUTES.course(
+                        lesson.next.courseSlug,
+                        lesson.next.moduleSlug,
+                        lesson.next.lessonSlug,
+                      )}
+                    >
+                      <Button
+                        variant={"outline"}
+                        className="flex items-center gap-2"
+                      >
+                        próximo
+                        <ChevronRight />
+                      </Button>
+                    </Link>
                   )}
                 </div>
               </div>

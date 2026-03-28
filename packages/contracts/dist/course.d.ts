@@ -9,6 +9,16 @@ export declare const LessonSchema: z.ZodObject<{
     position: z.ZodNumber;
     isFree: z.ZodBoolean;
     completed: z.ZodOptional<z.ZodBoolean>;
+    prev: z.ZodOptional<z.ZodNullable<z.ZodObject<{
+        lessonSlug: z.ZodString;
+        moduleSlug: z.ZodString;
+        courseSlug: z.ZodString;
+    }, z.core.$strip>>>;
+    next: z.ZodOptional<z.ZodNullable<z.ZodObject<{
+        lessonSlug: z.ZodString;
+        moduleSlug: z.ZodString;
+        courseSlug: z.ZodString;
+    }, z.core.$strip>>>;
 }, z.core.$strip>;
 export type Lesson = z.infer<typeof LessonSchema>;
 export declare const ModuleSchema: z.ZodObject<{
@@ -25,6 +35,16 @@ export declare const ModuleSchema: z.ZodObject<{
         position: z.ZodNumber;
         isFree: z.ZodBoolean;
         completed: z.ZodOptional<z.ZodBoolean>;
+        prev: z.ZodOptional<z.ZodNullable<z.ZodObject<{
+            lessonSlug: z.ZodString;
+            moduleSlug: z.ZodString;
+            courseSlug: z.ZodString;
+        }, z.core.$strip>>>;
+        next: z.ZodOptional<z.ZodNullable<z.ZodObject<{
+            lessonSlug: z.ZodString;
+            moduleSlug: z.ZodString;
+            courseSlug: z.ZodString;
+        }, z.core.$strip>>>;
     }, z.core.$strip>>;
 }, z.core.$strip>;
 export type Module = z.infer<typeof ModuleSchema>;
@@ -45,6 +65,16 @@ export declare const CourseStructureSchema: z.ZodObject<{
             position: z.ZodNumber;
             isFree: z.ZodBoolean;
             completed: z.ZodOptional<z.ZodBoolean>;
+            prev: z.ZodOptional<z.ZodNullable<z.ZodObject<{
+                lessonSlug: z.ZodString;
+                moduleSlug: z.ZodString;
+                courseSlug: z.ZodString;
+            }, z.core.$strip>>>;
+            next: z.ZodOptional<z.ZodNullable<z.ZodObject<{
+                lessonSlug: z.ZodString;
+                moduleSlug: z.ZodString;
+                courseSlug: z.ZodString;
+            }, z.core.$strip>>>;
         }, z.core.$strip>>;
     }, z.core.$strip>>;
 }, z.core.$strip>;
