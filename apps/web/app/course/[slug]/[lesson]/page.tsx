@@ -19,7 +19,6 @@ import {
   AlertTitle,
 } from "@/components/ui/alert";
 import {
-  ArrowLeft,
   ChevronLeft,
   ChevronRight,
   InfoIcon,
@@ -111,7 +110,12 @@ export default function Course() {
       <SidebarProvider>
         <CourseSidebar
           courseStructure={courseStructure}
-          courseProgress={courseProgress || 0}
+          courseProgress={
+            courseProgress || {
+              progress: 0,
+              certificatePublicId: null,
+            }
+          }
         />
 
         <SidebarInset>

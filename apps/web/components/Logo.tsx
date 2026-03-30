@@ -8,7 +8,7 @@ export function Logo() {
       </div>
       <div className="hidden sm:block">
         <p className="text-xs uppercase tracking-[0.2em] text-amber-200/70">
-          Curso
+          BOOK IN VIDEO
         </p>
         <p className="text-lg font-semibold text-white">
           Código Limpo na Prática

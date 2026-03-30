@@ -81,7 +81,7 @@ export function CertificateView({ certificate }: CertificateViewProps) {
             </Button>
           </section>
 
-          <section className="overflow-hidden border-[20px] border-orange-200 bg-white print:h-[210mm] print:w-[297mm] print:rounded-none">
+          <section className="overflow-hidden border-[20px] border-orange-300 bg-white print:h-[210mm] print:w-[297mm] print:rounded-none">
             <div className="flex flex-col justify-between aspect-[297/210] w-full h-full overflow-hidden rounded-[28px] bg-white px-14 py-12 text-center print:h-full print:w-full print:rounded-none">
               <div className="flex flex-col items-center">
                 <div className="inline-flex items-center gap-3 rounded-full border border-gray-200 px-4 py-2 text-stone-950">
@@ -93,7 +93,7 @@ export function CertificateView({ certificate }: CertificateViewProps) {
                   </span>
                 </div>
 
-                <p className="mt-6 text-3xl font-serif text-orange-400 font-semibold">
+                <p className="mt-6 uppercase tracking-[0.1em] text-3xl font-serif text-orange-400 font-semibold">
                   Certificado de Conclusão
                 </p>
               </div>

@@ -9,11 +9,11 @@ export function LoginButton() {
   return (
     <>
       {session ? (
-        <Button onClick={handleSignOut}>
+        <Button variant={"secondary"} onClick={handleSignOut}>
           <LogOut /> Sair
         </Button>
       ) : (
-        <Button onClick={handleSignIn}>
+        <Button variant={"secondary"} onClick={handleSignIn}>
           <User /> Entrar com Google
         </Button>
       )}

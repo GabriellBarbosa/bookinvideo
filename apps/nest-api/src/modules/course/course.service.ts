@@ -12,6 +12,7 @@ import { LessonProgressEntity } from './entities/lesson-progress.entity';
 import { UserEntity } from '../user/entities/user.entity';
 import { AuthUser } from '@/auth/auth-user.type';
 import { In } from 'typeorm';
+import { CertificateEntity } from '../certificate/entitites/certificate.entity';
 
 @Injectable()
 export class CourseService {
@@ -24,6 +25,8 @@ export class CourseService {
     private readonly lessonProgressRepository: Repository<LessonProgressEntity>,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(CertificateEntity)
+    private readonly certificateRepository: Repository<CertificateEntity>,
   ) {}
 
   async getCourseStructure(slug: string, authUser?: AuthUser) {
@@ -204,7 +207,12 @@ export class CourseService {
       select: ['uuid'],
     });
 
-    if (!user) return 0;
+    if (!user) {
+      return {
+        progress: 0,
+        certificatePublicId: null,
+      };
+    }
 
     const course = await this.courseRepository.findOne({
       where: { slug: payload.courseSlug },
@@ -215,13 +223,23 @@ export class CourseService {
       },
     });
 
-    if (!course) return 0;
+    if (!course) {
+      return {
+        progress: 0,
+        certificatePublicId: null,
+      };
+    }
 
     const lessonIds = course.modules.flatMap((module) =>
       module.lessons.map((lesson) => lesson.id).filter(Boolean),
     );
 
-    if (lessonIds.length === 0) return 0;
+    if (lessonIds.length === 0) {
+      return {
+        progress: 0,
+        certificatePublicId: null,
+      };
+    }
 
     const progresses = await this.lessonProgressRepository.find({
       where: {
@@ -237,6 +255,26 @@ export class CourseService {
         .map((progress) => progress.lessonId),
     );
 
-    return Math.round((completedLessonIds.size / lessonIds.length) * 100);
+    const progress = Math.round((completedLessonIds.size / lessonIds.length) * 100);
+
+    if (progress !== 100) {
+      return {
+        progress,
+        certificatePublicId: null,
+      };
+    }
+
+    const certificate = await this.certificateRepository.findOne({
+      where: {
+        userId: user.uuid,
+        courseId: course.id,
+      },
+      select: ['publicId'],
+    });
+
+    return {
+      progress,
+      certificatePublicId: certificate?.publicId ?? null,
+    };
   }
 }

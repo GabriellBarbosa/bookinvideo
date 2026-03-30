@@ -14,6 +14,7 @@ describe('CourseService', () => {
   let lessonRepo: jest.Mocked<Repository<LessonEntity>>;
   let lessonProgressRepo: jest.Mocked<Repository<LessonProgressEntity>>;
   let userRepo: jest.Mocked<Repository<UserEntity>>;
+  let certificateRepo: jest.Mocked<Repository<CertificateEntity>>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -46,6 +47,7 @@ describe('CourseService', () => {
         {
           provide: getRepositoryToken(CertificateEntity),
           useValue: {
+            findOne: jest.fn(),
             save: jest.fn(),
           },
         },
@@ -57,6 +59,7 @@ describe('CourseService', () => {
     lessonRepo = module.get(getRepositoryToken(LessonEntity));
     lessonProgressRepo = module.get(getRepositoryToken(LessonProgressEntity));
     userRepo = module.get(getRepositoryToken(UserEntity));
+    certificateRepo = module.get(getRepositoryToken(CertificateEntity));
   });
 
   it('mount course structure', async () => {
@@ -340,7 +343,7 @@ describe('CourseService', () => {
     ]);
   });
 
-  it('course progress: return null when user does not exist', async () => {
+  it('course progress: return empty progress when user does not exist', async () => {
     userRepo.findOne.mockResolvedValue(null);
 
     const result = await service.getCourseProgress({
@@ -348,12 +351,15 @@ describe('CourseService', () => {
       courseSlug: 'course-1',
     });
 
-    expect(result).toBe(0);
+    expect(result).toEqual({
+      progress: 0,
+      certificatePublicId: null,
+    });
     expect(userRepo.findOne).toHaveBeenCalled();
     expect(courseRepo.findOne).not.toHaveBeenCalled();
   });
 
-  it('course progress: return null when course does not exist', async () => {
+  it('course progress: return empty progress when course does not exist', async () => {
     userRepo.findOne.mockResolvedValue({
       uuid: 'gabriel@gmail.com',
     } as UserEntity);
@@ -364,12 +370,15 @@ describe('CourseService', () => {
       courseSlug: 'course-1',
     });
 
-    expect(result).toBe(0);
+    expect(result).toEqual({
+      progress: 0,
+      certificatePublicId: null,
+    });
     expect(courseRepo.findOne).toHaveBeenCalled();
     expect(lessonProgressRepo.find).not.toHaveBeenCalled();
   });
 
-  it('course progress: return 0 when course has no lessons', async () => {
+  it('course progress: return 0 progress when course has no lessons', async () => {
     userRepo.findOne.mockResolvedValue({
       uuid: 'gabriel@gmail.com',
     } as UserEntity);
@@ -383,11 +392,14 @@ describe('CourseService', () => {
       courseSlug: 'course-1',
     });
 
-    expect(result).toBe(0);
+    expect(result).toEqual({
+      progress: 0,
+      certificatePublicId: null,
+    });
     expect(lessonProgressRepo.find).not.toHaveBeenCalled();
   });
 
-  it('course progress: return completion percentage from completed lessons', async () => {
+  it('course progress: return completion percentage and null certificate when incomplete', async () => {
     userRepo.findOne.mockResolvedValue({
       uuid: 'gabriel@gmail.com',
     } as UserEntity);
@@ -419,8 +431,56 @@ describe('CourseService', () => {
       courseSlug: 'course-1',
     });
 
-    expect(result).toBe(67);
+    expect(result).toEqual({
+      progress: 67,
+      certificatePublicId: null,
+    });
     expect(lessonProgressRepo.find).toHaveBeenCalled();
+    expect(certificateRepo.findOne).not.toHaveBeenCalled();
+  });
+
+  it('course progress: return certificate public id when course is completed', async () => {
+    userRepo.findOne.mockResolvedValue({
+      uuid: 'gabriel@gmail.com',
+    } as UserEntity);
+    courseRepo.findOne.mockResolvedValue({
+      id: 'course-1',
+      modules: [
+        {
+          lessons: [{ id: 'lesson-1' }, { id: 'lesson-2' }],
+        },
+      ],
+    } as unknown as CourseEntity);
+    lessonProgressRepo.find.mockResolvedValue([
+      {
+        lessonId: 'lesson-1',
+        completedAt: new Date(),
+      },
+      {
+        lessonId: 'lesson-2',
+        completedAt: new Date(),
+      },
+    ] as LessonProgressEntity[]);
+    certificateRepo.findOne.mockResolvedValue({
+      publicId: 'cert-public-id',
+    } as CertificateEntity);
+
+    const result = await service.getCourseProgress({
+      userEmail: 'gabriel@gmail.com',
+      courseSlug: 'course-1',
+    });
+
+    expect(result).toEqual({
+      progress: 100,
+      certificatePublicId: 'cert-public-id',
+    });
+    expect(certificateRepo.findOne).toHaveBeenCalledWith({
+      where: {
+        userId: 'gabriel@gmail.com',
+        courseId: 'course-1',
+      },
+      select: ['publicId'],
+    });
   });
 
   it('getLesson: fill completed field when user is authenticated', async () => {

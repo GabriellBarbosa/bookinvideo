@@ -64,7 +64,10 @@ export class CourseController {
     @User() user: AuthUser,
   ) {
     if (!user?.email || !courseSlug) {
-      return 0;
+      return {
+        progress: 0,
+        certificatePublicId: null,
+      };
     }
 
     return await this.courseService.getCourseProgress({

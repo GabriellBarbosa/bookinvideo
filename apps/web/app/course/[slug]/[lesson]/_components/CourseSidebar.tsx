@@ -13,10 +13,14 @@ import { CourseStructure } from "@bookinvideo/contracts";
 import Link from "next/link";
 import { ROUTES } from "@/config/routes";
 import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
 
 interface Props {
   courseStructure: CourseStructure;
-  courseProgress: number;
+  courseProgress: {
+    progress: number;
+    certificatePublicId: string | null;
+  };
 }
 
 type Module = CourseStructure["modules"][number];
@@ -80,9 +84,23 @@ export function CourseSidebar({ courseStructure, courseProgress }: Props) {
       <SidebarFooter>
         <div className="flex justify-between">
           <p className="text-xs">Seu progresso</p>
-          <p className="text-xs">{courseProgress} %</p>
+          <p className="text-xs">{courseProgress.progress} %</p>
         </div>
-        <Progress value={courseProgress} color="red-500" />
+
+        <Progress value={courseProgress.progress} color="red-500" />
+
+        {courseProgress.certificatePublicId && (
+          <Link
+            className="block"
+            href={ROUTES.certificate(courseProgress.certificatePublicId)}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Button variant={`link`} className="w-full">
+              Ver Certificado
+            </Button>
+          </Link>
+        )}
       </SidebarFooter>
     </Sidebar>
   );
